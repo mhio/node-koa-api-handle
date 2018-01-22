@@ -1,6 +1,6 @@
 {
   "name": "@mhp/koa-api-handle",
-  "version": "0.0.1-0",
+  "version": "0.0.1-1",
   "description": "Koa API Promise Handler",
   "main": "src/index.js",
   "scripts": {
