@@ -28,6 +28,7 @@
   },
   "dependencies": {
     "@mhp/api-response": "^0.1.1",
-    "bluebird": "^3.5.1"
+    "bluebird": "^3.5.1",
+    "lodash.foreach": "^4.5.0"
   }
 }
