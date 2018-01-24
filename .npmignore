@@ -1,12 +1,18 @@
+# .gitignore stuff
 node_modules/
-
 .nyc_output/
 coverage/
 doc/*
 !doc/*.md
-yarn.lock
 
 yarn-error.log
 npm-error.log
 
+# npmignore specific
+mhp-*.tgz
+mh-*.tgz
+yarn.lock
 test/
+.eslintrc.yaml
+.jsdoc.json
+.babelrc
