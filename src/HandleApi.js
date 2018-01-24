@@ -3,7 +3,7 @@ const forEach = require('lodash.foreach')
 const base62 = require('base62-random')
 const Promise = require('bluebird')
 
-const { Message, MessageData, MessageError, Response } = require('@mhp/api-response')
+const { Message, MessageData, MessageError, Response } = require('@mhp/ApiResponse')
 
 
 class HandleApiError extends Error {}
