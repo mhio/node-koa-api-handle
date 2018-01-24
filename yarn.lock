@@ -2,25 +2,25 @@
 # yarn lockfile v1
 
 
-"@mhp/ClassDebug@^0.0.3":
-  version "0.0.3"
-  resolved "http://10.8.8.8:4873/@mhp%2fClassDebug/-/ClassDebug-0.0.3.tgz#f2087cc2c88728242178bf44ffbb1c5fde5b265f"
+"@mhp/ApiResponse@^0.2.3":
+  version "0.2.3"
+  resolved "http://10.8.8.8:4873/@mhp%2fApiResponse/-/ApiResponse-0.2.3.tgz#dbc5f4d7616484554ba68410b9701a75a8d1d177"
+  dependencies:
+    "@mhp/ClassDebug" "^0.0.5"
+    "@mhp/Message" "^0.3.0"
+    lodash.defaults "^4.2.0"
+
+"@mhp/ClassDebug@^0.0.5":
+  version "0.0.5"
+  resolved "http://10.8.8.8:4873/@mhp%2fClassDebug/-/ClassDebug-0.0.5.tgz#c54307f3d5560336682d3f0f481037168c85dbd2"
   dependencies:
     debug "^3.1.0"
 
-"@mhp/api-message@^0.2.0":
-  version "0.2.0"
-  resolved "http://10.8.8.8:4873/@mhp%2fapi-message/-/api-message-0.2.0.tgz#6ce1f9792b62280e98f16ed70ca9caceef07009c"
+"@mhp/Message@^0.3.0":
+  version "0.3.0"
+  resolved "http://10.8.8.8:4873/@mhp%2fMessage/-/Message-0.3.0.tgz#c3a83a29988e54ec2b7f85e700cd163bf4f797ba"
   dependencies:
     base62-random "^0.3.5"
-
-"@mhp/api-response@^0.1.1":
-  version "0.1.1"
-  resolved "http://10.8.8.8:4873/@mhp%2fapi-response/-/api-response-0.1.1.tgz#35b50d39bcb746dd8f6f53b664fdf94aedba97e7"
-  dependencies:
-    "@mhp/ClassDebug" "^0.0.3"
-    "@mhp/api-message" "^0.2.0"
-    lodash.defaults "^4.2.0"
 
 align-text@^0.1.1, align-text@^0.1.3:
   version "0.1.4"

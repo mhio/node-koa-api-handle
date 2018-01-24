@@ -1,6 +1,6 @@
 {
-  "name": "@mhp/koa-api-handle",
-  "version": "0.0.1-3",
+  "name": "@mhp/KoaApiHandle",
+  "version": "0.2.0-0",
   "description": "Koa API Promise Handler",
   "main": "src/index.js",
   "scripts": {
@@ -27,7 +27,7 @@
     "nyc": "^11.4.1"
   },
   "dependencies": {
-    "@mhp/api-response": "^0.1.1",
+    "@mhp/ApiResponse": "^0.2.3",
     "bluebird": "^3.5.1",
     "lodash.foreach": "^4.5.0"
   }
