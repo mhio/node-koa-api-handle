@@ -1,7 +1,7 @@
 
 const { KoaApiHandle, KoaApiHandleException } = require('../../')
 
-describe('module', function(){
+describe('mh::test::built::module', function(){
 
   it('should load the KoaApiHandle', function(){
     expect( KoaApiHandle, 'KoaApiHandle module' ).to.be.ok

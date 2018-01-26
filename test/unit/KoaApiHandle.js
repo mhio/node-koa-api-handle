@@ -1,3 +1,4 @@
+
 const { KoaApiHandle } = require('../../src/KoaApiHandle')
 
 describe('mh::test::unit::KoaApiHandle', function(){
@@ -7,7 +8,8 @@ describe('mh::test::unit::KoaApiHandle', function(){
   })
   
   it('should create a KoaApiHandle', function(){
-    expect( new KoaApiHandle() ).to.be.ok
+    let fn = () => new KoaApiHandle()
+    expect( fn ).to.throw('No class')
   })
 
 })

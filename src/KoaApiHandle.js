@@ -21,7 +21,7 @@ class KoaApiHandle {
   // If you pass in a `Message`, it will be passed to the client. 
   // Otherwise data will be turned into the normal `Response`/`Message` format. 
   static response(object, method){
-    return async function(ctx, next){
+    return async function KoaApiHandleresponse(ctx, next){
       let result = await object[method](ctx, next)
       let response = null
       if ( result instanceof Response ){
@@ -41,7 +41,7 @@ class KoaApiHandle {
   }
 
   static notFound(){
-    return function(ctx, next){ // eslint-disable-line no-unused-vars
+    return async function KoaApiHandlenotFound( ctx, next){ // eslint-disable-line no-unused-vars
       let message = new MessageError({
         label:    'Not Found',
         simple:   'Not Found',
@@ -70,6 +70,8 @@ class KoaApiHandle {
       ctx.body = message
     }
   }
+
+  constructor(){ throw new KoaApiHandleException('No class instances') }
 
 }
 
