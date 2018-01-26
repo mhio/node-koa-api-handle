@@ -7,7 +7,7 @@
     "test": "mocha test/unit test/int",
     "test:unit": "mocha test/int",
     "test:int": "mocha test/unit",
-    "test:watch": "nodemon -x mocha test/unit test/int",
+    "test:watch": "nodemon -x 'mocha test/unit test/int || exit 1'",
     "release:test": "set -uex; yarn test; npm version prerelease; npm publish --access public --tag testing",
     "release:patch2": "set -uex; rm -rf node_modules; yarn; yarn run test:coverage; npm version patch; git push; npm publish --access public; git push --tags",
     "release:patch": "set -uex; rm -rf node_modules; yarn; yarn run test:coverage; npm version patch; npm publish --access public;",
@@ -35,7 +35,8 @@
     "chai": "^4.1.2",
     "eslint": "^4.16.0",
     "koa": "^2.4.1",
-    "mocha": "^4.0.1",
+    "mocha": "^4.0.0",
+    "nodemon": "^1.14.11",
     "nyc": "^11.4.1",
     "source-map-support": "^0.5.2"
   },

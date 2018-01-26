@@ -21,7 +21,7 @@ class KoaApiHandle {
   // If you pass in a `Message`, it will be passed to the client. 
   // Otherwise data will be turned into the normal `Response`/`Message` format. 
   static response(object, method){
-    return async function KoaApiHandleresponse(ctx, next){
+    return async function koaApiHandleResponse(ctx, next){
       let result = await object[method](ctx, next)
       let response = null
       if ( result instanceof Response ){
@@ -41,7 +41,7 @@ class KoaApiHandle {
   }
 
   static notFound(){
-    return async function KoaApiHandlenotFound( ctx, next){ // eslint-disable-line no-unused-vars
+    return async function koaApiHandleNotFound( ctx, next ){ // eslint-disable-line no-unused-vars
       let message = new MessageError({
         label:    'Not Found',
         simple:   'Not Found',
@@ -53,25 +53,29 @@ class KoaApiHandle {
     }
   }
 
-  static async error(ctx, next){
-    try {
-      await next()
-    } catch (error) {
-      debug('request', ctx.request)
-      debug('api error', error)
-      if ( process.env.NODE_ENV === 'production' ) delete error.stack
-      if (!error.status) error.status = 500
-      if (!error.label)  error.label = 'Request Error'
-      if (!error.simple) error.simple = 'Request Error'
-      if (!error.id)     error.id = base62(12)
-      let message = new MessageError(error)
-      ctx.status = error.status
-      ctx.type = 'json'
-      ctx.body = message
+  static error(){
+    return async function koaApiHandleError( ctx, next ){ // eslint-disable-line no-unused-vars
+      try {
+        await next()
+      } catch (error) {
+        debug('request', ctx.request)
+        debug('api error', error)
+        if ( process.env.NODE_ENV === 'production' ) delete error.stack
+        if (!error.status) error.status = 500
+        if (!error.label)  error.label = 'Request Error'
+        if (!error.simple) error.simple = 'Request Error'
+        if (!error.id)     error.id = base62(12)
+        let message = new MessageError(error)
+        ctx.status = error.status
+        ctx.type = 'json'
+        ctx.body = message
+      }
     }
   }
 
-  constructor(){ throw new KoaApiHandleException('No class instances') }
+  constructor(){
+    throw new KoaApiHandleException('No class instances')
+  }
 
 }
 
