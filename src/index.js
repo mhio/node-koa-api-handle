@@ -1,3 +1,3 @@
-const { HandleApi } = require('./HandleApi')
+const { KoaApiHandle, KoaApiHandleException} = require('./KoaApiHandle')
 
-module.exports = { HandleApi }
+module.exports = { KoaApiHandle, KoaApiHandleException }

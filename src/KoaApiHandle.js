@@ -1,37 +1,43 @@
 const debug = require('debug')('mh:koa:HandlApi')
 const forEach = require('lodash.foreach')
 const base62 = require('base62-random')
-const Promise = require('bluebird')
 
 const { Exception } = require('@mhp/Exception')
-const { Message, MessageData, MessageError, Response } = require('@mhp/ApiResponse')
+const { 
+  Message,
+  MessageData,
+  MessageError,
+  Response
+} = require('@mhp/ApiResponse')
 
 
-class HandleApiException extends Exception {}
+class KoaApiHandleException extends Exception {}
 
 
-class HandleApi {
+class KoaApiHandle {
 
   // Default response handler in standard form.
   // If you pass in a `Response`, it will be passed to the client directly. 
   // If you pass in a `Message`, it will be passed to the client. 
   // Otherwise data will be turned into the normal `Response`/`Message` format. 
-  static async response(object, method){
-    let result = await object[method](ctx, next)
-    let response = null
-    if ( result instanceof Response ){
-      response = result
+  static response(object, method){
+    return async function(ctx, next){
+      let result = await object[method](ctx, next)
+      let response = null
+      if ( result instanceof Response ){
+        response = result
+      }
+      else if ( result instanceof Message ){
+        response = new Response({ message: result }).json()
+      }
+      else {
+        response = new Response({ message: new MessageData(result) }).json()
+      }
+      forEach(response.headers, (val, name)=> ctx.set(name, val))
+      ctx.status = response._status
+      ctx.type = 'json'
+      ctx.body = response._message
     }
-    else if ( result instanceof Message ){
-      response = new Response({ message: result }).json()
-    }
-    else {
-      response = new Response({ message: new MessageData(result) }).json()
-    }
-    forEach(response.headers, (val, name)=> ctx.set(name, val))
-    ctx.status = response._status
-    ctx.type = 'json'
-    ctx.body = response._message
   }
 
   static notFound(){
@@ -47,7 +53,7 @@ class HandleApi {
     }
   }
 
-  static async error(){
+  static async error(ctx, next){
     try {
       await next()
     } catch (error) {
@@ -67,4 +73,13 @@ class HandleApi {
 
 }
 
-module.exports = { HandleApi, HandleApiException }
+module.exports = {
+  KoaApiHandle,
+  KoaApiHandleException,
+
+  // Dependencies
+  Message,
+  MessageData,
+  MessageError,
+  Response
+}
