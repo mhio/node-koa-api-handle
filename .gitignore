@@ -4,6 +4,7 @@ node_modules/
 coverage/
 doc/*
 !doc/*.md
+lib/
 
 yarn-error.log
 npm-error.log
