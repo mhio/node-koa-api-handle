@@ -1,14 +1,14 @@
-const debug = require('debug')('mh:koa:HandlApi')
+const debug = require('debug')('mh:KoaApiHandle')
 const forEach = require('lodash.foreach')
 const base62 = require('base62-random')
 
-const { Exception } = require('@mhp/Exception')
+const { Exception } = require('@mhio/exception')
 const { 
   Message,
   MessageData,
   MessageError,
   Response
-} = require('@mhp/ApiResponse')
+} = require('@mhio/api-response')
 
 
 class KoaApiHandleException extends Exception {}
