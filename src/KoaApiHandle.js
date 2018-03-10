@@ -14,12 +14,17 @@ const {
 class KoaApiHandleException extends Exception {}
 
 
+/** 
+  Class to handle API request for Koa apps
+*/
 class KoaApiHandle {
 
-  // Default response handler in standard form.
-  // If you pass in a `ApiResponse`, it will be passed to the client directly. 
-  // If you pass in a `Message`, it will be passed to the client. 
-  // Otherwise data will be turned into the normal `ApiResponse`/`Message` format. 
+  /**
+   * @summary Default API response handler
+   * @description `.response` can handle all requests that come through Koa. This ensures standard response format and handling. Pass it an object and the method used to handle the reponse
+   * @param {object} object - The object contianing the request handler
+   * @param {string} method - The method name used to handle this request
+   */
   static response(object, method){
     return async function koaApiHandleApiResponse(ctx, next){
       let result = await object[method](ctx, next)
@@ -40,6 +45,10 @@ class KoaApiHandle {
     }
   }
 
+  /**
+   * @summary Default API 404/Not found handler
+   * @description `.response` can handle all requests that come through Koa. This ensures standard response format and handling. Pass it an object and the method used to handle the reponse
+   */
   static notFound(){
     return async function koaApiHandleNotFound( ctx, next ){ // eslint-disable-line no-unused-vars
       let message = new MessageError({
@@ -53,6 +62,10 @@ class KoaApiHandle {
     }
   }
 
+  /**
+   * @summary Default API 404/Not found handler
+   * @description `.error` provides a default error handler. This ensures any errors are moved into a standard response format. Supports Exceptions from `@mhio/exception`.
+   */
   static error(){
     return async function koaApiHandleError( ctx, next ){
       try {
@@ -74,7 +87,7 @@ class KoaApiHandle {
   }
 
   constructor(){
-    throw new KoaApiHandleException('No class instances')
+    throw new KoaApiHandleException('No class instances for you!')
   }
 
 }
