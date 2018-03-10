@@ -1,3 +1,4 @@
+/* global expect */
 
 const { KoaApiHandle } = require('../../src/KoaApiHandle')
 

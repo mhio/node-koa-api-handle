@@ -1,3 +1,4 @@
+/* global expect */
 const supertest = require('supertest')
 const http = require('http')
 const Koa = require('koa')
@@ -41,7 +42,7 @@ describe('mh::test::int::KoaApiHandle', function(){
     //app.on('error', KoaApiHandle.error())
     app.use(KoaApiHandle.error())
     app.use(ctx => {
-      if ( ctx.request.url = '/error' ) throw new Error('error')
+      if ( ctx.request.url === '/error' ) throw new Error('error')
     })
     let res = await request.get('/error')
     expect( res.status ).to.equal(500)
@@ -52,7 +53,7 @@ describe('mh::test::int::KoaApiHandle', function(){
     //app.on('error', KoaApiHandle.error())
     app.use(KoaApiHandle.error())
     app.use(ctx => {
-      if ( ctx.request.url = '/error' ) throw new Exception('oh no error', { simple: 'error'} )
+      if ( ctx.request.url === '/error' ) throw new Exception('oh no error', { simple: 'error'} )
     })
     let res = await request.get('/error')
     expect( res.status ).to.equal(500)

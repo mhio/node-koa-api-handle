@@ -3,15 +3,15 @@ const Benchmark = require('benchmark')
 const {
   message,
   Message,
-  MessageError,
+//  MessageError,
   MessageData,
 } = require('../../Message')
 
 const {
-  SocketMessage,
+//  SocketMessage,
   SocketMessageReply,
-  SocketMessageAction,
-  SocketMessageTransaction
+//  SocketMessageAction,
+//  SocketMessageTransaction
 } = require('../../SocketMessage')
 
 class A {
@@ -43,6 +43,7 @@ suite.add('plain message', function testmessage(){
   return message()
 })
 
+/* eslint-disable no-console */
 .on('cycle', event => console.log(String(event.target)) )
 .on('error', error => console.error('error', error.target.error) )
 .on('complete', function(){ 
