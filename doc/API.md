@@ -1,7 +1,7 @@
 <a name="KoaApiHandle"></a>
 
 ## KoaApiHandle
-<p>Class to handle API request for Koa apps</p>
+<p>Handle API requests and errors in Koa apps in a standard way.</p>
 
 **Kind**: global class  
 
