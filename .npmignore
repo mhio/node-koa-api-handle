@@ -1,11 +1,20 @@
+#git
 node_modules/
 
 .nyc_output/
 coverage/
-doc/*
-!doc/*.md
-src/
-test/
+doc/html
+pkg/
+*.tgz
 
 yarn-error.log
 npm-error.log
+
+
+#npm
+yarn.lock
+src/
+.babelrc
+.eslintrc.yaml
+.jsdoc.json
+

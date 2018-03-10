@@ -7,7 +7,7 @@ const {
   Message,
   MessageData,
   MessageError,
-  Response
+  ApiResponse
 } = require('@mhio/api-response')
 
 
@@ -17,21 +17,21 @@ class KoaApiHandleException extends Exception {}
 class KoaApiHandle {
 
   // Default response handler in standard form.
-  // If you pass in a `Response`, it will be passed to the client directly. 
+  // If you pass in a `ApiResponse`, it will be passed to the client directly. 
   // If you pass in a `Message`, it will be passed to the client. 
-  // Otherwise data will be turned into the normal `Response`/`Message` format. 
+  // Otherwise data will be turned into the normal `ApiResponse`/`Message` format. 
   static response(object, method){
-    return async function koaApiHandleResponse(ctx, next){
+    return async function koaApiHandleApiResponse(ctx, next){
       let result = await object[method](ctx, next)
       let response = null
-      if ( result instanceof Response ){
+      if ( result instanceof ApiResponse ){
         response = result
       }
       else if ( result instanceof Message ){
-        response = new Response({ message: result }).json()
+        response = new ApiResponse({ type: 'json', message: result })
       }
       else {
-        response = new Response({ message: new MessageData(result) }).json()
+        response = new ApiResponse({ type: 'json', message: new MessageData(result) })
       }
       forEach(response.headers, (val, name)=> ctx.set(name, val))
       ctx.status = response._status
@@ -64,7 +64,7 @@ class KoaApiHandle {
         if (!error.status) error.status = 500
         if (!error.label)  error.label = 'Request Error'
         if (!error.simple) error.simple = 'Request Error'
-        if (!error.id)     error.id = base62(12)
+        if (!error.id)     error.id = 'e-'+base62(12)
         let message = new MessageError(error)
         ctx.status = error.status
         ctx.type = 'json'
@@ -87,5 +87,5 @@ module.exports = {
   Message,
   MessageData,
   MessageError,
-  Response
+  ApiResponse
 }
