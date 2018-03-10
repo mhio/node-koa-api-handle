@@ -44,7 +44,7 @@ class KoaApiHandle {
     return async function koaApiHandleNotFound( ctx, next ){ // eslint-disable-line no-unused-vars
       let message = new MessageError({
         label:    'Not Found',
-        simple:   'Not Found',
+        simple:   `${ctx.url} not found`,
         details:  ctx.url,
         id:       ctx._mh_id,
       })
@@ -54,7 +54,7 @@ class KoaApiHandle {
   }
 
   static error(){
-    return async function koaApiHandleError( ctx, next ){ // eslint-disable-line no-unused-vars
+    return async function koaApiHandleError( ctx, next ){
       try {
         await next()
       } catch (error) {
