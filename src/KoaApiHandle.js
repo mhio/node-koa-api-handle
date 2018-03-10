@@ -15,7 +15,7 @@ class KoaApiHandleException extends Exception {}
 
 
 /** 
-  Class to handle API request for Koa apps
+  Handle API requests and errors in Koa apps in a standard way. 
 */
 class KoaApiHandle {
 
