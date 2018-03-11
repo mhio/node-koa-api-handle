@@ -13,7 +13,7 @@
     "release:patch": "set -uex; git pull; rm -rf node_modules; yarn; yarn run test:coverage; yarn run test:lint; yarn run build; yarn run test:built; npm version patch; git push; npm publish --access public; git push --tags",
     "test:coverage": "set -uex; nyc _mocha test/unit test/int; nyc report -r html; nyc check-coverage",
     "test:built": "set -uex; yarn run build; mocha test/built",
-    "watch": "nodemon -x -w . -i test/output",
+    "watch": "nodemon -w . -i test/output -x",
     "build": "set -uex; yarn run build:code; yarn run build:doc",
     "build:code": "babel -d lib/ src/",
     "build:doc": "set -uex; yarn run build:doc:html; yarn run build:doc:md",
