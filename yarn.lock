@@ -3,10 +3,11 @@
 
 
 "@mhio/api-response@^0.2.7":
-  version "0.2.7"
-  resolved "https://registry.npmjs.org/@mhio/api-response/-/api-response-0.2.7.tgz#68a5fc4596bebde693f78caa6f3fc3e0c7fd69ef"
+  version "0.2.9"
+  resolved "https://registry.npmjs.org/@mhio/api-response/-/api-response-0.2.9.tgz#a62e78b4d9503cd327c761187458def039e19c97"
   dependencies:
     "@mhio/class-debug" "^0.1.0"
+    "@mhio/exception" "^0.1.5"
     "@mhio/message" "^0.3.0"
     lodash.defaults "^4.2.0"
 
@@ -16,9 +17,9 @@
   dependencies:
     debug "^3.1.0"
 
-"@mhio/exception@^0.1.0":
-  version "0.1.5"
-  resolved "https://registry.npmjs.org/@mhio/exception/-/exception-0.1.5.tgz#5fb3207a139bdb2e07e851be996060fca0d27600"
+"@mhio/exception@^0.1.0", "@mhio/exception@^0.1.5":
+  version "0.1.12"
+  resolved "https://registry.npmjs.org/@mhio/exception/-/exception-0.1.12.tgz#c99077e5e1576b5c63ed375576ec58d5657e62a0"
 
 "@mhio/message@^0.3.0":
   version "0.3.3"
@@ -2029,11 +2030,7 @@ isstream@~0.1.2:
   version "0.1.2"
   resolved "https://registry.npmjs.org/isstream/-/isstream-0.1.2.tgz#47e63f7af55afa6f92e1500e690eb8b8529c099a"
 
-istanbul-lib-coverage@^1.1.1, istanbul-lib-coverage@^1.1.2:
-  version "1.1.2"
-  resolved "https://registry.npmjs.org/istanbul-lib-coverage/-/istanbul-lib-coverage-1.1.2.tgz#4113c8ff6b7a40a1ef7350b01016331f63afde14"
-
-istanbul-lib-coverage@^1.2.0:
+istanbul-lib-coverage@^1.1.1, istanbul-lib-coverage@^1.1.2, istanbul-lib-coverage@^1.2.0:
   version "1.2.0"
   resolved "https://registry.npmjs.org/istanbul-lib-coverage/-/istanbul-lib-coverage-1.2.0.tgz#f7d8f2e42b97e37fe796114cb0f9d68b5e3a4341"
 
@@ -3554,8 +3551,8 @@ supports-color@^5.2.0, supports-color@^5.3.0:
     has-flag "^3.0.0"
 
 table-layout@^0.4.2:
-  version "0.4.2"
-  resolved "https://registry.npmjs.org/table-layout/-/table-layout-0.4.2.tgz#10e9043c142a1e2d155da7257e478f0ef4981786"
+  version "0.4.3"
+  resolved "https://registry.npmjs.org/table-layout/-/table-layout-0.4.3.tgz#07509e1d72599f2c128a58ac67682ec4ba002af0"
   dependencies:
     array-back "^2.0.0"
     deep-extend "~0.5.0"
