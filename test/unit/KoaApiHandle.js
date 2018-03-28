@@ -25,4 +25,8 @@ describe('mh::test::unit::KoaApiHandle', function(){
     expect( KoaApiHandle.error() ).to.be.a('function')
   })
 
+  it('should return an error function', function(){
+    expect( KoaApiHandle.tracking() ).to.be.a('function')
+  })
+
 })
