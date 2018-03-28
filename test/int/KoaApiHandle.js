@@ -49,6 +49,18 @@ describe('mh::test::int::KoaApiHandle', function(){
     expect( res.body ).to.containSubset({ error: { label: 'Request Error' }})
   })
 
+  it('should handle koa tracking', async function(){
+    let o = { ok: ()=> Promise.resolve('ok') }
+    app.use(KoaApiHandle.tracking())
+    app.use(KoaApiHandle.response(o, 'ok'))
+    let res = await request.get('/ok')
+    expect( res.status ).to.equal(200)
+    expect( res.body ).to.containSubset({ data: 'ok' })
+    expect( res.headers ).to.contain.keys([
+      'x-request-id', 'x-transaction-id', 'x-powered-by', 'x-response-time'
+    ])
+  })
+
   it('should handle a koa Exception', async function(){
     //app.on('error', KoaApiHandle.error())
     app.use(KoaApiHandle.error())

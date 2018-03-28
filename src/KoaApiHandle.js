@@ -1,4 +1,5 @@
-const debug = require('debug')('mh:KoaApiHandle')
+const debugl = require('debug')('mh:KoaApiHandle')
+let debug = debugl
 const forEach = require('lodash.foreach')
 const base62 = require('base62-random')
 
@@ -84,6 +85,34 @@ class KoaApiHandle {
         ctx.body = message
       }
     }
+  }
+
+  static tracking(){
+    return async function tracking( ctx, next ){
+      const start = Date.now()
+      let request_id = base62(18)
+      ctx.set('x-request-id', request_id)
+      if ( ctx.get('x-transaction-id') === '' ){
+        ctx.set('x-transaction-id', request_id)
+      } else {
+        debug('tracking transaction id attached "%s"', ctx.get('x-transaction-id'))
+      }
+      ctx.set('x-powered-by', 'handles')
+      debug('tracking request', request_id, ctx.ip, ctx.method, ctx.url)
+      await next()
+      const ms = Date.now() - start
+      ctx.set('x-response-time', `${ms}ms`)
+      debug('tracking response', ctx.get('x-request-id'), ms, ctx.url)
+    }
+  }
+
+  static enableDebug(){
+    debugl.enabled = true
+    debug = debugl
+  }
+  static disableDebug(){
+    debugl.enabled = false
+    debug = noop
   }
 
   constructor(){
