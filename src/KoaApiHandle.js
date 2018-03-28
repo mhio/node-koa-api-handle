@@ -2,6 +2,7 @@ const debugl = require('debug')('mh:KoaApiHandle')
 let debug = debugl
 const forEach = require('lodash.foreach')
 const base62 = require('base62-random')
+const noop = function(){}
 
 const { Exception } = require('@mhio/exception')
 const { 
@@ -87,15 +88,25 @@ class KoaApiHandle {
     }
   }
 
-  static tracking(){
+  static tracking(options){
+    let trust = false
+    if ( options ) {
+      if ( options.transaction_trust === true ) trust = true
+      //if ( options.transaction_trust === 'ip' )  
+    }
     return async function tracking( ctx, next ){
       const start = Date.now()
       let request_id = base62(18)
       ctx.set('x-request-id', request_id)
-      if ( ctx.get('x-transaction-id') === '' ){
+      let incoming_trx_id = ctx.get('x-transaction-id')
+      if ( incoming_trx_id === '' || !trust ){
         ctx.set('x-transaction-id', request_id)
-      } else {
-        debug('tracking transaction id attached "%s"', ctx.get('x-transaction-id'))
+      }
+      else {
+        debug('tracking transaction id attached "%s"', incoming_trx_id)
+        if ( trust ){
+          ctx.set('x-transaction-id', incoming_trx_id)
+        }
       }
       ctx.set('x-powered-by', 'handles')
       debug('tracking request', request_id, ctx.ip, ctx.method, ctx.url)
@@ -109,10 +120,12 @@ class KoaApiHandle {
   static enableDebug(){
     debugl.enabled = true
     debug = debugl
+    return true
   }
   static disableDebug(){
     debugl.enabled = false
     debug = noop
+    return true
   }
 
   constructor(){

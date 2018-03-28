@@ -61,6 +61,19 @@ describe('mh::test::int::KoaApiHandle', function(){
     ])
   })
 
+  it('should handle an incomingt x-transaction-id if trusted', async function(){
+    let o = { ok: ()=> Promise.resolve('ok') }
+    app.use(KoaApiHandle.tracking({ transaction_trust: true }))
+    app.use(KoaApiHandle.response(o, 'ok'))
+    let res = await request.get('/ok').set('x-transaction-id', 'wakka')
+    expect( res.status ).to.equal(200)
+    expect( res.body ).to.containSubset({ data: 'ok' })
+    expect( res.headers ).to.contain.keys([
+      'x-request-id', 'x-transaction-id', 'x-powered-by', 'x-response-time'
+    ])
+    expect( res.headers['x-transaction-id'] ).to.equal('wakka')
+  })
+
   it('should handle a koa Exception', async function(){
     //app.on('error', KoaApiHandle.error())
     app.use(KoaApiHandle.error())

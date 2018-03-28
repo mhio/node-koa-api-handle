@@ -29,4 +29,12 @@ describe('mh::test::unit::KoaApiHandle', function(){
     expect( KoaApiHandle.tracking() ).to.be.a('function')
   })
 
+  it('should enable debug', function(){
+    expect( KoaApiHandle.enableDebug() ).to.be.ok
+  })
+
+  it('should disalbe debug', function(){
+    expect( KoaApiHandle.disableDebug() ).to.be.ok
+  })
+
 })
