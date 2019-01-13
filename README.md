@@ -18,7 +18,7 @@ npm install @mhio/koa-api-handle
 ```
 const Koa = require('koa')
 const Router = require('koa-router')
-const KoaApiHandle = require('@mhio/koa-api-handle')
+const {KoaApiHandle} = require('@mhio/koa-api-handle')
 
 let handler = {
   ok: ()=> Promise.resolve('ok'),
