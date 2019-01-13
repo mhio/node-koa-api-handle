@@ -35,7 +35,8 @@ router.get('/ok', KoaApiHandle.response(handler, 'ok'))
 router.post('/other', KoaApiHandle.response(handler, 'other'))
 router.get('/error', KoaApiHandle.response(handler, 'error'))
 
-app.use(router.routes()).user(router.allowedMethods())
+app.use(router.routes())
+   .use(router.allowedMethods())
 
 app.use(KoaApiHandle.notFound())
 
