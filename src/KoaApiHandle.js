@@ -29,7 +29,8 @@ class KoaApiHandle {
    */
   static response(object, method){
     return async function koaApiHandleApiResponse(ctx, next){
-      let result = await object[method](ctx, next)
+      let caller = (typeof object == 'function') ? object : object[method]
+      let result = await caller(ctx, next)
       let response = null
       if ( result instanceof ApiResponse ){
         response = result
