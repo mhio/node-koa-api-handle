@@ -31,6 +31,14 @@ describe('mh::test::int::KoaApiHandle', function(){
     expect( res.body ).to.have.property('data').and.equal('ok')
   })
 
+  it('should generate a koa response for a plain function', async function(){
+    let o = ()=> Promise.resolve('ok')
+    app.use(KoaApiHandle.response(o))
+    let res = await request.get('/ok')
+    expect( res.status ).to.equal(200)
+    expect( res.body ).to.have.property('data').and.equal('ok')
+  })
+
   it('should generate a koa notFound response', async function(){
     app.use(KoaApiHandle.notFound())
     let res = await request.get('/nonono')
