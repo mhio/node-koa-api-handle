@@ -5,8 +5,8 @@
   "main": "lib/index.js",
   "scripts": {
     "test": "mocha test/unit test/int",
-    "test:unit": "mocha test/int",
-    "test:int": "mocha test/unit",
+    "test:unit": "mocha test/unit",
+    "test:int": "mocha test/int",
     "test:lint": "eslint src/ test/",
     "test:watch": "nodemon -x 'mocha --bail test/unit test/int || exit 1'",
     "release:test": "set -uex; yarn test; npm version prerelease; npm publish --access public --tag testing",
