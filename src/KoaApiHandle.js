@@ -69,13 +69,31 @@ class KoaApiHandle {
    * @summary Default API 404/Not found handler
    * @description `.error` provides a default error handler. This ensures any errors are moved into a standard response format. Supports Exceptions from `@mhio/exception`.
    */
-  static error(){
+  static error(options){
+    let logger = false
+    let logger_pass_args = false
+    if ( options ) {
+      if ( Boolean(options.logger) ) logger = options.logger
+      if ( Boolean(options.logger_pass_args) ) logger_pass_args = true
+    }
     return async function koaApiHandleError( ctx, next ){
       try {
         await next()
       } catch (error) {
         debug('request', ctx.request)
         debug('api error', error)
+        if ( logger ) {
+          if ( logger_pass_args ) {
+            logger(ctx, error)
+          } else {
+            let request_id = ctx.get('x-request-id')
+            let transaction_id = ctx.get('x-transaction-id')
+            let msg = `Error in [${ctx.request.method} ${ctx.request.path}]`
+            if ( request_id ) msg += ` rid[${(request_id || '')}]`
+            if ( transaction_id ) msg += ` tid[${(request_id || '')}]`
+            logger(msg, error)
+          }
+        }
         if ( process.env.NODE_ENV === 'production' ) delete error.stack
         if (!error.status) error.status = 500
         if (!error.label)  error.label = 'Request Error'
