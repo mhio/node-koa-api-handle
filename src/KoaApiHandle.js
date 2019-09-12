@@ -68,6 +68,9 @@ class KoaApiHandle {
   /**
    * @summary Default API 404/Not found handler
    * @description `.error` provides a default error handler. This ensures any errors are moved into a standard response format. Supports Exceptions from `@mhio/exception`.
+   * @param {object} options - The options for the logger  
+   * @param {function} options.logger - The custom logger function to usee
+   * @param {boolean} options.logger_pass_args - By default a preformatted `message` and the `error` object are passed in. This passes the Koa `ctx` instead of a message.
    */
   static error(options){
     let logger = false
