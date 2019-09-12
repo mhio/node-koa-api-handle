@@ -110,6 +110,13 @@ class KoaApiHandle {
     }
   }
 
+
+  /**
+   * @summary Request tracking
+   * @description `.tracking` provides a request and transaction ID's and a response time header.
+   * @param {object} options - The options for the logger  
+   * @param {boolean} options.transaction_trust - Trust the clients `x-transaction-id` header.
+   */
   static tracking(options){
     let trust = false
     if ( options ) {
