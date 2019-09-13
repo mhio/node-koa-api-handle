@@ -8,7 +8,8 @@
 * [KoaApiHandle](#KoaApiHandle)
     * [.response(object, method)](#KoaApiHandle.response)
     * [.notFound()](#KoaApiHandle.notFound)
-    * [.error()](#KoaApiHandle.error)
+    * [.error(options)](#KoaApiHandle.error)
+    * [.tracking(options)](#KoaApiHandle.tracking)
 
 
 * * *
@@ -41,11 +42,34 @@
 
 <a name="KoaApiHandle.error"></a>
 
-### KoaApiHandle.error()
+### KoaApiHandle.error(options)
 <p><code>.error</code> provides a default error handler. This ensures any errors are moved into a standard response format. Supports Exceptions from <code>@mhio/exception</code>.</p>
 
 **Kind**: static method of [<code>KoaApiHandle</code>](#KoaApiHandle)  
 **Summary**: <p>Default API 404/Not found handler</p>  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| options | <code>object</code> | <p>The options for the logger</p> |
+| options.logger | <code>function</code> | <p>The custom logger function to usee</p> |
+| options.logger_pass_args | <code>boolean</code> | <p>By default a preformatted <code>message</code> and the <code>error</code> object are passed in. This passes the Koa <code>ctx</code> instead of a message.</p> |
+
+
+* * *
+
+<a name="KoaApiHandle.tracking"></a>
+
+### KoaApiHandle.tracking(options)
+<p><code>.tracking</code> provides a request and transaction ID's and a response time header.</p>
+
+**Kind**: static method of [<code>KoaApiHandle</code>](#KoaApiHandle)  
+**Summary**: <p>Request tracking</p>  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| options | <code>object</code> | <p>The options for the logger</p> |
+| options.transaction_trust | <code>boolean</code> | <p>Trust the clients <code>x-transaction-id</code> header.</p> |
+
 
 * * *
 
