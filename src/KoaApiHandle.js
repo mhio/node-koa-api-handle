@@ -29,7 +29,7 @@ class KoaApiHandle {
    */
   static response(object, method){
     return async function koaApiHandleApiResponse(ctx, next){
-      let caller = (typeof object == 'function') ? object : object[method]
+      let caller = (typeof object === 'function') ? object : object[method]
       let result = await caller(ctx, next)
       let response = null
       if ( result instanceof ApiResponse ){
@@ -76,8 +76,8 @@ class KoaApiHandle {
     let logger = false
     let logger_pass_args = false
     if ( options ) {
-      if ( Boolean(options.logger) ) logger = options.logger
-      if ( Boolean(options.logger_pass_args) ) logger_pass_args = true
+      if ( options.logger ) logger = options.logger
+      if ( options.logger_pass_args ) logger_pass_args = true
     }
     return async function koaApiHandleError( ctx, next ){
       try {
