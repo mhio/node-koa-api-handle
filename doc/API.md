@@ -7,6 +7,7 @@
 
 * [KoaApiHandle](#KoaApiHandle)
     * [.response(object, method)](#KoaApiHandle.response)
+    * [.customResponse(object, method)](#KoaApiHandle.customResponse)
     * [.notFound()](#KoaApiHandle.notFound)
     * [.error(options)](#KoaApiHandle.error)
     * [.tracking(options)](#KoaApiHandle.tracking)
@@ -21,6 +22,22 @@
 
 **Kind**: static method of [<code>KoaApiHandle</code>](#KoaApiHandle)  
 **Summary**: <p>Default API response handler</p>  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| object | <code>object</code> | <p>The object contianing the request handler</p> |
+| method | <code>string</code> | <p>The method name used to handle this request</p> |
+
+
+* * *
+
+<a name="KoaApiHandle.customResponse"></a>
+
+### KoaApiHandle.customResponse(object, method)
+<p><code>.customResponse</code> allows <code>ctx</code> to be set by the user. Pass it an object and the method used to handle the reponse</p>
+
+**Kind**: static method of [<code>KoaApiHandle</code>](#KoaApiHandle)  
+**Summary**: <p>Custom API response handler</p>  
 
 | Param | Type | Description |
 | --- | --- | --- |
