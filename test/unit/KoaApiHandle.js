@@ -24,7 +24,7 @@ describe('mh::test::unit::KoaApiHandle', function(){
   it('should return a customResponse function', async function(){
     let handler = KoaApiHandle.customResponse(()=> Promise.resolve('one'))
     let ctx = {}
-    let res = await handler(ctx)
+    await handler(ctx)
     expect( ctx.body ).to.equal('one')
   })
 
