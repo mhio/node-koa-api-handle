@@ -41,7 +41,7 @@ describe('mh::test::int::KoaApiHandle', function(){
 
   it('should generate a customResponse for an object', async function(){
     let o = {
-      ok: (ctx) => {
+      ok: () => {
         return Promise.resolve('ok')
       }
     } 
@@ -54,7 +54,7 @@ describe('mh::test::int::KoaApiHandle', function(){
   })
 
   it('should generate a customResponse for a plain function', async function(){
-    let o = (ctx) => {
+    let o = () => {
       return Promise.resolve('ok')
     }
     app.use(KoaApiHandle.customResponse(o))
