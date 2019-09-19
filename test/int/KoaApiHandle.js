@@ -39,6 +39,31 @@ describe('mh::test::int::KoaApiHandle', function(){
     expect( res.body ).to.have.property('data').and.equal('ok')
   })
 
+  it('should generate a customResponse for an object', async function(){
+    let o = {
+      ok: (ctx) => {
+        return Promise.resolve('ok')
+      }
+    } 
+    app.use(KoaApiHandle.customResponse(o, 'ok'))
+    let res = await request.get('/ok')
+    expect( res.status ).to.equal(200)
+    expect( res.headers['content-type'] ).to.eql('text/plain; charset=utf-8')
+    expect( res.text ).to.equal('ok')
+    expect( res.body ).to.eql({})
+  })
+
+  it('should generate a customResponse for a plain function', async function(){
+    let o = (ctx) => {
+      return Promise.resolve('ok')
+    }
+    app.use(KoaApiHandle.customResponse(o))
+    let res = await request.get('/ok')
+    expect( res.status ).to.equal(200)
+    expect( res.text ).to.equal('ok')
+    expect( res.body ).to.eql({})
+  })
+
   it('should generate a koa notFound response', async function(){
     app.use(KoaApiHandle.notFound())
     let res = await request.get('/nonono')
