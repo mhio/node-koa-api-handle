@@ -17,6 +17,17 @@ describe('mh::test::unit::KoaApiHandle', function(){
     expect( KoaApiHandle.response() ).to.be.a('function')
   })
 
+  it('should return a customResponse function', function(){
+    expect( KoaApiHandle.customResponse() ).to.be.a('function')
+  })
+
+  it('should return a customResponse function', async function(){
+    let handler = KoaApiHandle.customResponse(()=> Promise.resolve('one'))
+    let ctx = {}
+    let res = await handler(ctx)
+    expect( ctx.body ).to.equal('one')
+  })
+
   it('should return a notFound function', function(){
     expect( KoaApiHandle.notFound() ).to.be.a('function')
   })

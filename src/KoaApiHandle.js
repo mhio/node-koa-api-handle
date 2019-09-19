@@ -49,6 +49,20 @@ class KoaApiHandle {
   }
 
   /**
+   * @summary Custom API response handler
+   * @description `.customResponse` allows `ctx` to be set by the user. Pass it an object and the method used to handle the reponse
+   * @param {object} object - The object contianing the request handler
+   * @param {string} method - The method name used to handle this request
+   */
+  static customResponse(object, method){
+    return async function koaApiHandleApiResponse(ctx, next){
+      let caller = (typeof object === 'function') ? object : object[method].bind(object)
+      let result = await caller(ctx, next)
+      ctx.body = result
+    }
+  }
+
+  /**
    * @summary Default API 404/Not found handler
    * @description `.response` can handle all requests that come through Koa. This ensures standard response format and handling. Pass it an object and the method used to handle the reponse
    */
@@ -85,18 +99,6 @@ class KoaApiHandle {
       } catch (error) {
         debug('request', ctx.request)
         debug('api error', error)
-        if ( logger ) {
-          if ( logger_pass_args ) {
-            logger(ctx, error)
-          } else {
-            let request_id = ctx.get('x-request-id')
-            let transaction_id = ctx.get('x-transaction-id')
-            let msg = `Error in [${ctx.request.method} ${ctx.request.path}]`
-            if ( request_id ) msg += ` rid[${(request_id || '')}]`
-            if ( transaction_id ) msg += ` tid[${(request_id || '')}]`
-            logger(msg, error)
-          }
-        }
         if ( process.env.NODE_ENV === 'production' ) delete error.stack
         if (!error.status) error.status = 500
         if (!error.label)  error.label = 'Request Error'
@@ -106,6 +108,18 @@ class KoaApiHandle {
         ctx.status = error.status
         ctx.type = 'json'
         ctx.body = message
+        if ( logger ) {
+          if ( logger_pass_args ) {
+            logger(ctx, error)
+          } else {
+            let request_id = ctx.response.get('x-request-id')
+            let transaction_id = ctx.response.get('x-transaction-id')
+            let msg = `Error in [${ctx.request.method} ${ctx.request.path}]`
+            if ( request_id ) msg += ` rid[${(request_id || '')}]`
+            if ( transaction_id ) msg += ` tid[${(request_id || '')}]`
+            logger(msg, error)
+          }
+        }
       }
     }
   }
