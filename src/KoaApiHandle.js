@@ -42,9 +42,9 @@ class KoaApiHandle {
         response = new ApiResponse({ type: 'json', message: new MessageData(result) })
       }
       forEach(response.headers, (val, name)=> ctx.set(name, val))
-      ctx.status = response._status
-      ctx.type = 'json'
-      ctx.body = response._message
+      ctx.status = response._status // eslint-disable-line require-atomic-updates
+      ctx.type = 'json' // eslint-disable-line require-atomic-updates
+      ctx.body = response._message // eslint-disable-line require-atomic-updates
     }
   }
 
@@ -58,7 +58,7 @@ class KoaApiHandle {
     return async function koaApiHandleApiResponse(ctx, next){
       let caller = (typeof object === 'function') ? object : object[method].bind(object)
       let result = await caller(ctx, next)
-      ctx.body = result
+      ctx.body = result // eslint-disable-line require-atomic-updates
     }
   }
 
