@@ -18,7 +18,8 @@
 <a name="KoaApiHandle.response"></a>
 
 ### KoaApiHandle.response(object, method)
-<p><code>.response</code> can handle all requests that come through Koa. This ensures standard response format and handling. Pass it an object and the method used to handle the reponse</p>
+<p><code>.response</code> can handle all requests that come through Koa. This ensures standard
+response format and handling. Pass it an object and the method used to handle the reponse</p>
 
 **Kind**: static method of [<code>KoaApiHandle</code>](#KoaApiHandle)  
 **Summary**: <p>Default API response handler</p>  
@@ -68,7 +69,8 @@
 | Param | Type | Description |
 | --- | --- | --- |
 | options | <code>object</code> | <p>The options for the logger</p> |
-| options.logger | <code>function</code> | <p>The custom logger function to usee</p> |
+| options.logger | <code>object</code> | <p>The custom logger to use (<code>console</code> API)</p> |
+| options.logger.error | <code>function</code> | <p>The custom log function to use</p> |
 | options.logger_pass_args | <code>boolean</code> | <p>By default a preformatted <code>message</code> and the <code>error</code> object are passed in. This passes the Koa <code>ctx</code> instead of a message.</p> |
 
 
