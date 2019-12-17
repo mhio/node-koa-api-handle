@@ -124,12 +124,35 @@ describe('mh::test::int::KoaApiHandle', function(){
     })
   })
 
-  it('should handle a koa Exception and send it to the logger', async function(){
+  it('should handle a koa Exception and send it to the logger function', async function(){
     //app.on('error', KoaApiHandle.error())
     let test_msg
     let test_err
     // this could go horribly wrong if multiple tests accessed this endpoint
     app.use(KoaApiHandle.error({ logger: (msg, err)=> { test_msg = msg; test_err = err }}))
+    app.use(ctx => {
+      if ( ctx.request.url === '/error' ) throw new Exception('oh no error', { simple: 'error'} )
+    })
+    let res = await request.get('/error')
+    expect( res.status ).to.equal(500)
+    expect( test_msg ).to.equal('Error in [GET /error]')
+    expect( test_err ).to.containSubset({
+      label: 'Request Error',
+      message: 'oh no error',
+      name: 'Exception'
+    })
+  })
+
+  it('should handle a koa Exception and send it to the logger console API', async function(){
+    //app.on('error', KoaApiHandle.error())
+    let test_msg
+    let test_err
+    // this could go horribly wrong if multiple tests accessed this endpoint
+    app.use(KoaApiHandle.error({
+      logger: {
+        error: (msg, err)=> { test_msg = msg; test_err = err }
+      }
+    }))
     app.use(ctx => {
       if ( ctx.request.url === '/error' ) throw new Exception('oh no error', { simple: 'error'} )
     })
