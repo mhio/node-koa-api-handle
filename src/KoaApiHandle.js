@@ -23,7 +23,8 @@ class KoaApiHandle {
 
   /**
    * @summary Default API response handler
-   * @description `.response` can handle all requests that come through Koa. This ensures standard response format and handling. Pass it an object and the method used to handle the reponse
+   * @description `.response` can handle all requests that come through Koa. This ensures standard
+   *               response format and handling. Pass it an object and the method used to handle the reponse
    * @param {object} object - The object contianing the request handler
    * @param {string} method - The method name used to handle this request
    */
@@ -83,14 +84,21 @@ class KoaApiHandle {
    * @summary Default API 404/Not found handler
    * @description `.error` provides a default error handler. This ensures any errors are moved into a standard response format. Supports Exceptions from `@mhio/exception`.
    * @param {object} options - The options for the logger  
-   * @param {function} options.logger - The custom logger function to usee
+   * @param {object} options.logger - The custom logger to use (`console` API)
+   * @param {function} options.logger.error - The custom log function to use 
    * @param {boolean} options.logger_pass_args - By default a preformatted `message` and the `error` object are passed in. This passes the Koa `ctx` instead of a message.
    */
   static error(options){
     let logger = false
     let logger_pass_args = false
     if ( options ) {
-      if ( options.logger ) logger = options.logger
+      if ( options.logger ) {
+        if (typeof options.logger === 'function') {
+          logger = { error: options.logger }
+        } else {
+          logger = options.logger
+        }
+      }
       if ( options.logger_pass_args ) logger_pass_args = true
     }
     return async function koaApiHandleError( ctx, next ){
@@ -110,14 +118,14 @@ class KoaApiHandle {
         ctx.body = message
         if ( logger ) {
           if ( logger_pass_args ) {
-            logger(ctx, error)
+            logger.error(ctx, error)
           } else {
             let request_id = ctx.response.get('x-request-id')
             let transaction_id = ctx.response.get('x-transaction-id')
             let msg = `Error in [${ctx.request.method} ${ctx.request.path}]`
             if ( request_id ) msg += ` rid[${(request_id || '')}]`
             if ( transaction_id ) msg += ` tid[${(request_id || '')}]`
-            logger(msg, error)
+            logger.error(msg, error)
           }
         }
       }
