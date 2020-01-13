@@ -1,5 +1,5 @@
-const debugl = require('debug')('mh:KoaApiHandle')
-let debug = debugl
+const debug = require('debug')('mh:KoaApiHandle')
+//let debug = debugl
 const forEach = require('lodash.foreach')
 const base62 = require('base62-random')
 const noop = function(){}
@@ -135,11 +135,14 @@ class KoaApiHandle {
 
   /**
    * @summary Request tracking
+
+   * @descrtracking
    * @description `.tracking` provides a request and transaction ID's and a response time header.
    *              Attaches `request_id`, `trasaction_id`, `request_start`, `request_total`, to `ctx.state`
    * @param {object}         options                        - The options for the logger  
    * @param {boolean|string} options.transaction_trust      - Trust the clients `x-transaction-id` header. (true/false/'ip')
    * @param {array}          options.transaction_trust_ips  - List of IP's to trust the clients `x-transaction-id` header from.
+   *                                                          e.g. localhosts are `['::ffff:127.0.0.1', '127.0.0.1', '::1']`
    */
   static tracking(options){
     let tx_trust = false
@@ -148,8 +151,15 @@ class KoaApiHandle {
         tx_trust = true
       }
       if ( options.transaction_trust === 'ip' ) {
+        if (!options.transaction_trust_ips) {
+          throw new Error('transaction_trust `ip` must have a list of ips')
+        }
+        if (!options.transaction_trust_ips.includes) {
+          throw new Error('transaction_trust_ips must support `.includes`')
+        }
         tx_trust = function checkTransactionTrust(ctx){
-          if ( options.transaction_trust_ip_list.includes(ctx.request.ip) ) {
+          debug(ctx.request.ip)
+          if ( options.transaction_trust_ips.includes(ctx.request.ip) ) {
             return true
           }
           return false
@@ -166,13 +176,15 @@ class KoaApiHandle {
         ctx.state.transaction_id = ctx.state.request_id
       }
       else {
-        debug('tracking transaction id attached "%s"', incoming_trx_id)
         if ( tx_trust === true ){
+          debug('tracking true transaction id attached "%s"', incoming_trx_id)
           ctx.state.transaction_id = incoming_trx_id
         } else {
           if ( tx_trust(ctx) ) {
+            debug('tracking fn true transaction id attached "%s"', incoming_trx_id)
             ctx.state.transaction_id = incoming_trx_id
           } else {
+            debug('tracking transaction id defaulted', incoming_trx_id)
             ctx.state.transaction_id = ctx.state.request_id
           } 
         }
@@ -194,14 +206,14 @@ class KoaApiHandle {
   }
 
   static enableDebug(){
-    debugl.enabled = true
-    debug = debugl
+    // debugl.enabled = true
+    // debug = debugl
     return true
   }
 
   static disableDebug(){
-    debugl.enabled = false
-    debug = noop
+    // debugl.enabled = false
+    // debug = noop
     return true
   }
 
