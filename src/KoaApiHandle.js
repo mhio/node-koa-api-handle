@@ -2,7 +2,7 @@ const debug = require('debug')('mh:KoaApiHandle')
 //let debug = debugl
 const forEach = require('lodash.foreach')
 const base62 = require('base62-random')
-const noop = function(){}
+//const noop = function(){}
 
 const { Exception } = require('@mhio/exception')
 const { 
@@ -146,7 +146,11 @@ class KoaApiHandle {
    */
   static tracking(options){
     let tx_trust = false
+    let powered_by = 'handles'
     if ( options ) {
+      if ( options.powered_by ) {
+        powered_by = options.powered_by
+      } 
       if ( options.transaction_trust === true ) {
         tx_trust = true
       }
@@ -167,35 +171,41 @@ class KoaApiHandle {
       } 
     }
     return async function tracking( ctx, next ){
-      ctx.state.request_time_start = Date.now()
-      ctx.state.request_id = base62(18)
+      const request_time_start = Date.now()
+      ctx.state.request_time_start = request_time_start
+      
+      const request_id = base62(18)
+      ctx.state.request_id = request_id
       ctx.set('x-request-id', ctx.state.request_id)
 
+      let transaction_id = null
       const incoming_trx_id = ctx.get('x-transaction-id')
       if ( !tx_trust || !incoming_trx_id ){
-        ctx.state.transaction_id = ctx.state.request_id
+        transaction_id = request_id
       }
       else {
         if ( tx_trust === true ){
           debug('tracking true transaction id attached "%s"', incoming_trx_id)
-          ctx.state.transaction_id = incoming_trx_id
+          transaction_id = incoming_trx_id
         } else {
           if ( tx_trust(ctx) ) {
             debug('tracking fn true transaction id attached "%s"', incoming_trx_id)
-            ctx.state.transaction_id = incoming_trx_id
+            transaction_id = incoming_trx_id
           } else {
             debug('tracking transaction id defaulted', incoming_trx_id)
-            ctx.state.transaction_id = ctx.state.request_id
+            transaction_id = ctx.state.request_id
           } 
         }
       }
+      ctx.state.transaction_id = transaction_id
       ctx.set('x-transaction-id', ctx.state.transaction_id)
-      ctx.set('x-powered-by', 'handles')
+
+      ctx.set('x-powered-by', powered_by)
 
       debug('tracking - request', ctx.state.request_id, ctx.state.transaction_id, ctx.ip, ctx.state.request_time_start, ctx.method, ctx.url)
       await next()
 
-      ctx.state.request_time_total = Date.now() - ctx.state.request_time_start
+      ctx.state.request_time_total = Date.now() - request_time_start  // eslint-disable-line require-atomic-updates  
       ctx.set('x-response-time', `${ctx.state.request_time_total}ms`)
       debug('tracking - response', ctx.state.request_id, ctx.state.transaction_id, ctx.ip, ctx.state.request_time_start, ctx.state.request_time_total, ctx.url)
     }
