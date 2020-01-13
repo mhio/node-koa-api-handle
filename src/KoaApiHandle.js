@@ -136,36 +136,61 @@ class KoaApiHandle {
   /**
    * @summary Request tracking
    * @description `.tracking` provides a request and transaction ID's and a response time header.
-   * @param {object} options - The options for the logger  
-   * @param {boolean} options.transaction_trust - Trust the clients `x-transaction-id` header.
+   *              Attaches `request_id`, `trasaction_id`, `request_start`, `request_total`, to `ctx.state`
+   * @param {object}         options                        - The options for the logger  
+   * @param {boolean|string} options.transaction_trust      - Trust the clients `x-transaction-id` header. (true/false/'ip')
+   * @param {array}          options.transaction_trust_ips  - List of IP's to trust the clients `x-transaction-id` header from.
    */
   static tracking(options){
-    let trust = false
+    let tx_trust = false
     if ( options ) {
-      if ( options.transaction_trust === true ) trust = true
-      //if ( options.transaction_trust === 'ip' )  
+      if ( options.transaction_trust === true ) {
+        tx_trust = true
+      }
+      if ( options.transaction_trust === 'ip' ) {
+        tx_trust = function checkTransactionTrust(ctx){
+          if ( options.transaction_trust_ip_list.includes(ctx.request.ip) ) {
+            return true
+          }
+          return false
+        }
+      } 
     }
     return async function tracking( ctx, next ){
-      const start = Date.now()
-      let request_id = base62(18)
-      ctx.set('x-request-id', request_id)
-      let incoming_trx_id = ctx.get('x-transaction-id')
-      if ( incoming_trx_id === '' || !trust ){
-        ctx.set('x-transaction-id', request_id)
+      ctx.state.request_time_start = Date.now()
+      ctx.state.request_id = base62(18)
+      ctx.set('x-request-id', ctx.state.request_id)
+
+      const incoming_trx_id = ctx.get('x-transaction-id')
+      if ( !tx_trust || !incoming_trx_id ){
+        ctx.state.transaction_id = ctx.state.request_id
       }
       else {
         debug('tracking transaction id attached "%s"', incoming_trx_id)
-        if ( trust ){
-          ctx.set('x-transaction-id', incoming_trx_id)
+        if ( tx_trust === true ){
+          ctx.state.transaction_id = incoming_trx_id
+        } else {
+          if ( tx_trust(ctx) ) {
+            ctx.state.transaction_id = incoming_trx_id
+          } else {
+            ctx.state.transaction_id = ctx.state.request_id
+          } 
         }
       }
+      ctx.set('x-transaction-id', ctx.state.transaction_id)
       ctx.set('x-powered-by', 'handles')
-      debug('tracking request', request_id, ctx.ip, ctx.method, ctx.url)
+
+      debug('tracking - request', ctx.state.request_id, ctx.state.transaction_id, ctx.ip, ctx.state.request_time_start, ctx.method, ctx.url)
       await next()
-      const ms = Date.now() - start
-      ctx.set('x-response-time', `${ms}ms`)
-      debug('tracking response', ctx.get('x-request-id'), ms, ctx.url)
+
+      ctx.state.request_time_total = Date.now() - ctx.state.request_time_start
+      ctx.set('x-response-time', `${ctx.state.request_time_total}ms`)
+      debug('tracking - response', ctx.state.request_id, ctx.state.transaction_id, ctx.ip, ctx.state.request_time_start, ctx.state.request_time_total, ctx.url)
     }
+  }
+
+  static get debug(){
+    return debug
   }
 
   static enableDebug(){
@@ -173,6 +198,7 @@ class KoaApiHandle {
     debug = debugl
     return true
   }
+
   static disableDebug(){
     debugl.enabled = false
     debug = noop
