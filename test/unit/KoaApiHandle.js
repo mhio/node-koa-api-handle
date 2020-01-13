@@ -40,12 +40,24 @@ describe('mh::test::unit::KoaApiHandle', function(){
     expect( KoaApiHandle.tracking() ).to.be.a('function')
   })
 
-  it('should enable debug', function(){
-    expect( KoaApiHandle.enableDebug() ).to.be.ok
-  })
+  describe('reset debug', function(){
 
-  it('should disalbe debug', function(){
-    expect( KoaApiHandle.disableDebug() ).to.be.ok
+    let debug_state = null 
+    before(function(){
+      debug_state = KoaApiHandle.debug.enabled
+    })
+    after(function(){
+      KoaApiHandle.debug.enabled = debug_state
+    })
+
+    it('should enable debug', function(){
+      expect( KoaApiHandle.enableDebug() ).to.be.ok
+    })
+
+    it('should disalbe debug', function(){
+      expect( KoaApiHandle.disableDebug() ).to.be.ok
+    })
+
   })
 
 })
