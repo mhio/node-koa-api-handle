@@ -79,15 +79,18 @@ response format and handling. Pass it an object and the method used to handle th
 <a name="KoaApiHandle.tracking"></a>
 
 ### KoaApiHandle.tracking(options)
-<p><code>.tracking</code> provides a request and transaction ID's and a response time header.</p>
+<p><code>.tracking</code> provides a request and transaction ID's and a response time header.
+Attaches <code>request_id</code>, <code>trasaction_id</code>, <code>request_start</code>, <code>request_total</code>, to <code>ctx.state</code></p>
 
 **Kind**: static method of [<code>KoaApiHandle</code>](#KoaApiHandle)  
 **Summary**: <p>Request tracking</p>  
+**Descrtracking**:   
 
 | Param | Type | Description |
 | --- | --- | --- |
 | options | <code>object</code> | <p>The options for the logger</p> |
-| options.transaction_trust | <code>boolean</code> | <p>Trust the clients <code>x-transaction-id</code> header.</p> |
+| options.transaction_trust | <code>boolean</code> \| <code>string</code> | <p>Trust the clients <code>x-transaction-id</code> header. (true/false/'ip')</p> |
+| options.transaction_trust_ips | <code>array</code> | <p>List of IP's to trust the clients <code>x-transaction-id</code> header from. e.g. localhosts are <code>['::ffff:127.0.0.1', '127.0.0.1', '::1']</code></p> |
 
 
 * * *
