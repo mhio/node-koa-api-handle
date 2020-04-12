@@ -73,7 +73,7 @@ describe('mh::test::int::KoaApiHandle', function(){
 
   it('should handle a koa error', async function(){
     //app.on('error', KoaApiHandle.error())
-    app.use(KoaApiHandle.error())
+    app.use(KoaApiHandle.errors())
     app.use(ctx => {
       if ( ctx.request.url === '/error' ) throw new Error('error')
     })
@@ -90,7 +90,7 @@ describe('mh::test::int::KoaApiHandle', function(){
     expect( res.status ).to.equal(200)
     expect( res.body ).to.containSubset({ data: 'ok' })
     expect( res.headers ).to.contain.keys([
-      'x-request-id', 'x-transaction-id', 'x-powered-by', 'x-response-time'
+      'x-request-id', 'x-transaction-id', 'x-response-time'
     ])
   })
 
@@ -102,7 +102,7 @@ describe('mh::test::int::KoaApiHandle', function(){
     expect( res.status ).to.equal(200)
     expect( res.body ).to.containSubset({ data: 'ok' })
     expect( res.headers ).to.contain.keys([
-      'x-request-id', 'x-transaction-id', 'x-powered-by', 'x-response-time'
+      'x-request-id', 'x-transaction-id', 'x-response-time'
     ])
     expect( res.headers['x-transaction-id'] ).to.equal('wakka')
   })
@@ -115,14 +115,14 @@ describe('mh::test::int::KoaApiHandle', function(){
     expect( res.status ).to.equal(200)
     expect( res.body ).to.containSubset({ data: 'ok' })
     expect( res.headers ).to.contain.keys([
-      'x-request-id', 'x-transaction-id', 'x-powered-by', 'x-response-time'
+      'x-request-id', 'x-transaction-id', 'x-response-time'
     ])
     expect( res.headers['x-transaction-id'] ).to.equal('wakka')
   })
 
   it('should handle a koa Exception', async function(){
     //app.on('error', KoaApiHandle.error())
-    app.use(KoaApiHandle.error())
+    app.use(KoaApiHandle.errors())
     app.use(ctx => {
       if ( ctx.request.url === '/error' ) throw new Exception('oh no error', { simple: 'error'} )
     })
@@ -132,28 +132,34 @@ describe('mh::test::int::KoaApiHandle', function(){
       error: { 
         label: 'Request Error',
         message: 'oh no error',
-        name: 'Exception'
+        name: 'Exception',
+        simple: 'error',
       }
     })
   })
 
-  it('should handle a koa Exception and send it to the logger function', async function(){
+  it('should handle a koa Exception and send the original to the logger function', async function(){
     //app.on('error', KoaApiHandle.error())
     let test_msg
     let test_err
     // this could go horribly wrong if multiple tests accessed this endpoint
-    app.use(KoaApiHandle.error({ logger: (msg, err)=> { test_msg = msg; test_err = err }}))
+    app.use(KoaApiHandle.errors({ logger: (msg, err)=> { test_msg = msg; test_err = err }}))
     app.use(ctx => {
       if ( ctx.request.url === '/error' ) throw new Exception('oh no error', { simple: 'error'} )
     })
     let res = await request.get('/error')
     expect( res.status ).to.equal(500)
     expect( test_msg ).to.equal('Error in [GET /error]')
-    expect( test_err ).to.containSubset({
-      label: 'Request Error',
-      message: 'oh no error',
-      name: 'Exception'
-    })
+
+    expect( test_err.message ).to.equal('oh no error')
+    expect( test_err.name ).to.equal('Exception')
+    expect( test_err.status ).to.be.undefined
+    expect( test_err.simple ).to.equal('error')
+
+    expect( res.body.error.message ).to.equal('oh no error')
+    expect( res.body.error.name ).to.equal('Exception')
+    expect( res.body.error.status ).to.equal(500)
+    expect( res.body.error.simple ).to.equal('error')
   })
 
   it('should handle a koa Exception and send it to the logger console API', async function(){
@@ -161,7 +167,7 @@ describe('mh::test::int::KoaApiHandle', function(){
     let test_msg
     let test_err
     // this could go horribly wrong if multiple tests accessed this endpoint
-    app.use(KoaApiHandle.error({
+    app.use(KoaApiHandle.errors({
       logger: {
         error: (msg, err)=> { test_msg = msg; test_err = err }
       }
@@ -172,11 +178,17 @@ describe('mh::test::int::KoaApiHandle', function(){
     let res = await request.get('/error')
     expect( res.status ).to.equal(500)
     expect( test_msg ).to.equal('Error in [GET /error]')
-    expect( test_err ).to.containSubset({
-      label: 'Request Error',
-      message: 'oh no error',
-      name: 'Exception'
-    })
+
+    expect( test_err.message ).to.equal('oh no error')
+    expect( test_err.name ).to.equal('Exception')
+    expect( test_err.status ).to.be.undefined
+    expect( test_err.simple ).to.equal('error')
+
+    expect( res.body.error.label ).to.equal('Request Error')
+    expect( res.body.error.message ).to.equal('oh no error')
+    expect( res.body.error.name ).to.equal('Exception')
+    expect( res.body.error.status ).to.equal(500)
+    expect( res.body.error.simple ).to.equal('error')
   })
 
   it('should handle a koa Exception and send the plain ctx object  to the logger', async function(){
@@ -184,7 +196,7 @@ describe('mh::test::int::KoaApiHandle', function(){
     let test_ctx
     let test_err
     // this could go horribly wrong if multiple tests accessed this endpoint
-    app.use(KoaApiHandle.error({
+    app.use(KoaApiHandle.errors({
       logger: (ctx, err)=> { test_ctx = ctx; test_err = err },
       logger_pass_args: true,
     }))
@@ -197,11 +209,10 @@ describe('mh::test::int::KoaApiHandle', function(){
       originalUrl: '/error',
       method: 'GET',
     })
-    expect( test_err ).to.containSubset({
-      label: 'Request Error',
-      message: 'oh no error',
-      name: 'Exception'
-    })
+    expect( test_err.message ).to.equal('oh no error')
+    expect( test_err.name ).to.equal('Exception')
+    expect( test_err.status ).to.be.undefined
+    expect( test_err.simple ).to.equal('error')
   })
 
 

@@ -1,8 +1,6 @@
 const debug = require('debug')('mh:KoaApiHandle')
-//let debug = debugl
-const forEach = require('lodash.foreach')
 const base62 = require('base62-random')
-//const noop = function(){}
+const _clone = require('lodash.clone')
 
 const { Exception } = require('@mhio/exception')
 const { 
@@ -42,7 +40,9 @@ class KoaApiHandle {
       else {
         response = new ApiResponse({ type: 'json', message: new MessageData(result) })
       }
-      forEach(response.headers, (val, name)=> ctx.set(name, val))
+      for ( { val, name } in response.headers ) {
+        ctx.set(name, val)
+      }
       ctx.status = response._status // eslint-disable-line require-atomic-updates
       ctx.type = 'json' // eslint-disable-line require-atomic-updates
       ctx.body = response._message // eslint-disable-line require-atomic-updates
@@ -80,6 +80,11 @@ class KoaApiHandle {
     }
   }
 
+
+  static error (options) {
+    console.warn('KoaApiHandle.error is deprecated, use KoaApiHandle.errors')
+    return this.errors(options)
+  }
   /**
    * @summary Default API 404/Not found handler
    * @description `.error` provides a default error handler. This ensures any errors are moved into a standard response format. Supports Exceptions from `@mhio/exception`.
@@ -87,19 +92,28 @@ class KoaApiHandle {
    * @param {object} options.logger - The custom logger to use (`console` API)
    * @param {function} options.logger.error - The custom log function to use 
    * @param {boolean} options.logger_pass_args - By default a preformatted `message` and the `error` object are passed in. This passes the Koa `ctx` instead of a message.
+   * @param {boolean} options.logger_pass_object - By default a preformatted `message` and the `error` object are passed in. This passes the jsonable object.
+   * @param {boolean} options.send_full_errors - Send complete original error out (usually api to api comms).
+   * @param {object} options.allowed_errors - Names of errors allowed out to users
    */
-  static error(options){
-    let logger = false
+  static errors (options) {
+    let loggerFn = console.error
     let logger_pass_args = false
+    let logger_pass_object = false
+    let send_full_errors = false
+    let allowed_errors = {}
     if ( options ) {
       if ( options.logger ) {
         if (typeof options.logger === 'function') {
-          logger = { error: options.logger }
+          loggerFn = options.logger
         } else {
-          logger = options.logger
+          loggerFn = options.logger.error.bind(options.logger)
         }
       }
       if ( options.logger_pass_args ) logger_pass_args = true
+      if ( options.logger_pass_object ) logger_pass_object = true
+      if ( options.send_full_errors ) full_errors = true
+      if ( options.allowed_errors ) allowed_errors = allowed_errors
     }
     return async function koaApiHandleError( ctx, next ){
       try {
@@ -107,27 +121,50 @@ class KoaApiHandle {
       } catch (error) {
         debug('request', ctx.request)
         debug('api error', error)
-        if ( process.env.NODE_ENV === 'production' ) delete error.stack
-        if (!error.status) error.status = 500
-        if (!error.label)  error.label = 'Request Error'
-        if (!error.simple) error.simple = 'Request Error'
-        if (!error.id)     error.id = 'e-'+base62(12)
-        let message = new MessageError(error)
-        ctx.status = error.status
-        ctx.type = 'json'
-        ctx.body = message
-        if ( logger ) {
-          if ( logger_pass_args ) {
-            logger.error(ctx, error)
-          } else {
-            let request_id = ctx.response.get('x-request-id')
-            let transaction_id = ctx.response.get('x-transaction-id')
-            let msg = `Error in [${ctx.request.method} ${ctx.request.path}]`
-            if ( request_id ) msg += ` rid[${(request_id || '')}]`
-            if ( transaction_id ) msg += ` tid[${(request_id || '')}]`
-            logger.error(msg, error)
+        if (!error.id) error.id = 'e-'+base62(12)
+        if ( loggerFn ) {
+          const request_id = ctx.response.get('x-request-id')
+          const transaction_id = ctx.response.get('x-transaction-id')
+          try {
+            if ( logger_pass_args ) {
+              loggerFn(ctx, error)
+            }
+            else if ( logger_pass_object ) {
+              let msg = `Error in [${ctx.request.method} ${ctx.request.path}]`
+              if ( request_id ) msg += ` rid[${(request_id || '')}]`
+              if ( transaction_id ) msg += ` tid[${(request_id || '')}]`
+              loggerFn({ msg, message: `${error.message}`, stack: `${error.stack}`, error })
+            }
+            else {
+              let msg = `Error in [${ctx.request.method} ${ctx.request.path}]`
+              if ( request_id ) msg += ` rid[${(request_id || '')}]`
+              if ( transaction_id ) msg += ` tid[${(request_id || '')}]`
+              loggerFn(msg, error)
+            }
+          }
+          catch (logging_error) {
+            console.error('error logging error %s', request_id, logging_error, error)
           }
         }
+        let response_error = {}
+        if (send_full_errors) {
+          response_error = _clone(error)
+        } 
+        else {
+          if (allowed_errors[error.name]) {
+            response_error = _clone(error)
+            if (process.env.NODE_ENV === 'production') delete response_error.stack
+          }
+        }
+        response_error.name = (error.name) ? error.name : 'Error'
+        response_error.status = (error.status) ? error.status : 500
+        response_error.label = (error.label) ? error.label : 'Request Error'
+        response_error.simple = (error.simple) ? error.simple : 'An unknown error occurred'
+        response_error.message = (error.message) ? error.message : 'An unknown error occurred'
+        const message = new MessageError(response_error)
+        ctx.status = response_error.status
+        ctx.type = 'json'
+        ctx.body = message
       }
     }
   }
@@ -171,11 +208,9 @@ class KoaApiHandle {
       } 
     }
     return async function tracking( ctx, next ){
-      const request_time_start = Date.now()
-      ctx.state.request_time_start = request_time_start
+      const request_time_start = ctx.state.request_time_start = Date.now()
       
-      const request_id = base62(18)
-      ctx.state.request_id = request_id
+      const request_id = ctx.state.request_id = base62(18)
       ctx.set('x-request-id', ctx.state.request_id)
 
       let transaction_id = null
@@ -200,14 +235,36 @@ class KoaApiHandle {
       ctx.state.transaction_id = transaction_id
       ctx.set('x-transaction-id', ctx.state.transaction_id)
 
-      ctx.set('x-powered-by', powered_by)
-
       debug('tracking - request', ctx.state.request_id, ctx.state.transaction_id, ctx.ip, ctx.state.request_time_start, ctx.method, ctx.url)
       await next()
 
       ctx.state.request_time_total = Date.now() - request_time_start  // eslint-disable-line require-atomic-updates  
       ctx.set('x-response-time', `${ctx.state.request_time_total}ms`)
       debug('tracking - response', ctx.state.request_id, ctx.state.transaction_id, ctx.ip, ctx.state.request_time_start, ctx.state.request_time_total, ctx.url)
+    }
+  }
+
+  static poweredBy(powered_by = 'handles'){
+    return async function poweredBy(ctx, next){
+      ctx.set('x-powered-by', powered_by)
+      await next()
+    }
+  }
+ 
+  static logging(options = {}){
+    const logger = (options.logger) ? options.logger : console
+    const log_level = (options.log_level) ? options.log_level : 'info'
+    if (typeof logger[log_level] !== 'function') {
+      throw Error(`KoaApiHandle.logging logger['log_level'] is not a function: ${typeof logger.info}`)
+    }
+    return async function logging(ctx, next){
+      try {
+        ctx.log = logger
+        await next()
+      }
+      finally {
+        logger[log_level]({ headers: ctx.req.headers, path: ctx.req.path })
+      }
     }
   }
 
