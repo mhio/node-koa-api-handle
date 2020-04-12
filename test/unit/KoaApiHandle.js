@@ -33,7 +33,7 @@ describe('mh::test::unit::KoaApiHandle', function(){
   })
 
   it('should return an error function', function(){
-    expect( KoaApiHandle.error() ).to.be.a('function')
+    expect( KoaApiHandle.errors() ).to.be.a('function')
   })
 
   it('should return an error function', function(){

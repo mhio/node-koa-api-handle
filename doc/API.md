@@ -9,7 +9,7 @@
     * [.response(object, method)](#KoaApiHandle.response)
     * [.customResponse(object, method)](#KoaApiHandle.customResponse)
     * [.notFound()](#KoaApiHandle.notFound)
-    * [.error(options)](#KoaApiHandle.error)
+    * [.errors(options)](#KoaApiHandle.errors)
     * [.tracking(options)](#KoaApiHandle.tracking)
 
 
@@ -58,9 +58,9 @@ response format and handling. Pass it an object and the method used to handle th
 
 * * *
 
-<a name="KoaApiHandle.error"></a>
+<a name="KoaApiHandle.errors"></a>
 
-### KoaApiHandle.error(options)
+### KoaApiHandle.errors(options)
 <p><code>.error</code> provides a default error handler. This ensures any errors are moved into a standard response format. Supports Exceptions from <code>@mhio/exception</code>.</p>
 
 **Kind**: static method of [<code>KoaApiHandle</code>](#KoaApiHandle)  
