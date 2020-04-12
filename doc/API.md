@@ -72,6 +72,9 @@ response format and handling. Pass it an object and the method used to handle th
 | options.logger | <code>object</code> | <p>The custom logger to use (<code>console</code> API)</p> |
 | options.logger.error | <code>function</code> | <p>The custom log function to use</p> |
 | options.logger_pass_args | <code>boolean</code> | <p>By default a preformatted <code>message</code> and the <code>error</code> object are passed in. This passes the Koa <code>ctx</code> instead of a message.</p> |
+| options.logger_pass_object | <code>boolean</code> | <p>By default a preformatted <code>message</code> and the <code>error</code> object are passed in. This passes the jsonable object.</p> |
+| options.send_full_errors | <code>boolean</code> | <p>Send complete original error out (usually api to api comms).</p> |
+| options.allowed_errors | <code>object</code> | <p>Names of errors allowed out to users</p> |
 
 
 * * *
