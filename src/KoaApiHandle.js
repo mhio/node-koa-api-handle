@@ -100,6 +100,7 @@ class KoaApiHandle {
     let logger_pass_args = false
     let logger_pass_object = false
     let send_full_errors = false
+    let default_error_message = 'There was a problem processing your request'
     let allowed_errors = {}
     if ( options ) {
       if ( options.logger ) {
@@ -158,8 +159,8 @@ class KoaApiHandle {
         response_error.name = (error.name) ? error.name : 'Error'
         response_error.status = (error.status) ? error.status : 500
         response_error.label = (error.label) ? error.label : 'Request Error'
-        response_error.simple = (error.simple) ? error.simple : 'An unknown error occurred'
-        response_error.message = (error.message) ? error.message : 'An unknown error occurred'
+        response_error.simple = (error.simple) ? error.simple : default_error_message
+        response_error.message = (error.message) ? error.simple : default_error_message
         const message = new MessageError(response_error)
         ctx.status = response_error.status
         ctx.type = 'json'
