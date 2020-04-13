@@ -114,6 +114,7 @@ class KoaApiHandle {
       if ( options.logger_pass_object ) logger_pass_object = true
       if ( options.send_full_errors ) send_full_errors = true
       if ( options.allowed_errors ) allowed_errors = options.allowed_errors
+      if ( options.default_error_message ) default_error_message = options.default_error_message
     }
     return async function koaApiHandleError( ctx, next ){
       try {
