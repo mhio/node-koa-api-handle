@@ -119,6 +119,27 @@ describe('mh::test::int::KoaApiHandle', function(){
     ])
     expect( res.headers['x-transaction-id'] ).to.equal('wakka')
   })
+  it('should handle an incomingt x-transaction-id if ip is not trusted', async function(){
+    let o = { ok: ()=> Promise.resolve('ok') }
+    app.use(KoaApiHandle.tracking({ transaction_trust: 'ip', transaction_trust_ips: ['8.8.8.8'] }))
+    app.use(KoaApiHandle.response(o, 'ok'))
+    let res = await request.get('/ok').set('x-transaction-id', 'wakka')
+    expect( res.status ).to.equal(200)
+    expect( res.body ).to.containSubset({ data: 'ok' })
+    expect( res.headers ).to.contain.keys([
+      'x-request-id', 'x-transaction-id', 'x-response-time'
+    ])
+    expect( res.headers['x-transaction-id'] ).to.not.equal('wakka')
+    expect( res.headers['x-transaction-id'] ).to.match(/^\w{18}$/)
+  })
+  it('should fail if `ip` and no trusted ips supplied', async function(){
+    let fn = () => app.use(KoaApiHandle.tracking({ transaction_trust: 'ip' }))
+    expect(fn).to.throw('must have a list')
+  })
+  it('should fail if `ip` and no trusted ips supplied', async function(){
+    let fn = () => app.use(KoaApiHandle.tracking({ transaction_trust: 'ip', transaction_trust_ips: true }))
+    expect(fn).to.throw('support `.includes`')
+  })
 
   it('should handle a koa Exception', async function(){
     //app.on('error', KoaApiHandle.error())
@@ -216,4 +237,57 @@ describe('mh::test::int::KoaApiHandle', function(){
   })
 
 
+  describe('logging', function(){
+    it('should run a logger', async function(){
+      const logs = []
+      app.use(KoaApiHandle.logging({ logger: { info: obj => logs.push(obj) }}))
+      app.use(ctx => ctx.body = 'response')
+      await request.get('/request')
+      expect(logs[0]).to.containSubset({
+        req: {
+          headers: {},
+          method: 'GET',
+          url: '/request',
+        },
+        res: {
+          headers: {},
+          statusCode: 200,
+        }
+      })
+    })
+    it('should run a logger on error', async function(){
+      const logs = []
+      app.use(KoaApiHandle.logging({ logger: { info: obj => logs.push(obj) }}))
+      app.use(ctx => { throw new Error('nope') })
+      await request.get('/error')
+      expect(logs[0]).to.containSubset({
+        req: {
+          headers: {},
+          method: 'GET',
+          url: '/error',
+        },
+        res: {
+          headers: {},
+        },
+        error: { message: 'nope' }
+      })
+    })
+    it('should run a logger on error', async function(){
+      const fn = () => app.use(KoaApiHandle.logging({ logger: {} }))
+      expect(fn).to.throw(/not a function/) 
+    })
+  })
+  
+  describe('poweredBy', function(){
+    it('should include a default', async function(){
+      app.use(KoaApiHandle.poweredBy())
+      const res = await request.get('/error')
+      expect(res.headers).to.containSubset({ 'x-powered-by': 'handles' })
+    })
+    it('should include a default', async function(){
+      app.use(KoaApiHandle.poweredBy('test'))
+      const res = await request.get('/error')
+      expect(res.headers).to.containSubset({ 'x-powered-by': 'test' })
+    })
+  })
 })
