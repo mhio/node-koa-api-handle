@@ -1,7 +1,6 @@
 const debug = require('debug')('mh:KoaApiHandle')
 const base62 = require('base62-random')
 const _clone = require('lodash.clone')
-
 const { Exception } = require('@mhio/exception')
 const { 
   Message,
@@ -183,11 +182,7 @@ class KoaApiHandle {
    */
   static tracking(options){
     let tx_trust = false
-    let powered_by = 'handles'
     if ( options ) {
-      if ( options.powered_by ) {
-        powered_by = options.powered_by
-      } 
       if ( options.transaction_trust === true ) {
         tx_trust = true
       }
@@ -210,7 +205,7 @@ class KoaApiHandle {
     return async function tracking( ctx, next ){
       const request_time_start = ctx.state.request_time_start = Date.now()
       
-      const request_id = ctx.state.request_id = base62(18)
+      const request_id = ctx.req.id = ctx.state.request_id = base62(18)
       ctx.set('x-request-id', ctx.state.request_id)
 
       let transaction_id = null
@@ -252,18 +247,29 @@ class KoaApiHandle {
   }
  
   static logging(options = {}){
+    const { mapHttpRequest, mapHttpResponse } = require('pino-std-serializers')
     const logger = (options.logger) ? options.logger : console
     const log_level = (options.log_level) ? options.log_level : 'info'
     if (typeof logger[log_level] !== 'function') {
       throw Error(`KoaApiHandle.logging logger['log_level'] is not a function: ${typeof logger.info}`)
     }
     return async function logging(ctx, next){
+      let outer_error
       try {
         ctx.log = logger
         await next()
       }
+      catch (error) {
+        outer_error = error
+        throw error
+      } 
       finally {
-        logger[log_level]({ headers: ctx.req.headers, path: ctx.req.path })
+        const log_obj = {
+          ...mapHttpRequest(ctx.req),
+          ...mapHttpResponse(ctx.res),
+        }
+        if (outer_error) log_obj.error = outer_error
+        logger[log_level](log_obj)
       }
     }
   }
