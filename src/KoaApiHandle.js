@@ -39,7 +39,7 @@ class KoaApiHandle {
       else {
         response = new ApiResponse({ type: 'json', message: new MessageData(result) })
       }
-      for ( { val, name } in response.headers ) {
+      for ( let { val, name } in response.headers ) {
         ctx.set(name, val)
       }
       ctx.status = response._status // eslint-disable-line require-atomic-updates
@@ -111,8 +111,8 @@ class KoaApiHandle {
       }
       if ( options.logger_pass_args ) logger_pass_args = true
       if ( options.logger_pass_object ) logger_pass_object = true
-      if ( options.send_full_errors ) full_errors = true
-      if ( options.allowed_errors ) allowed_errors = allowed_errors
+      if ( options.send_full_errors ) send_full_errors = true
+      if ( options.allowed_errors ) allowed_errors = options.allowed_errors
     }
     return async function koaApiHandleError( ctx, next ){
       try {
