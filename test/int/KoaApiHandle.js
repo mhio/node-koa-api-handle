@@ -152,7 +152,7 @@ describe('mh::test::int::KoaApiHandle', function(){
     expect( res.body ).to.containSubset({
       error: { 
         label: 'Request Error',
-        message: 'oh no error',
+        message: 'error',
         name: 'Exception',
         simple: 'error',
       }
@@ -176,11 +176,6 @@ describe('mh::test::int::KoaApiHandle', function(){
     expect( test_err.name ).to.equal('Exception')
     expect( test_err.status ).to.be.undefined
     expect( test_err.simple ).to.equal('error')
-
-    expect( res.body.error.message ).to.equal('oh no error')
-    expect( res.body.error.name ).to.equal('Exception')
-    expect( res.body.error.status ).to.equal(500)
-    expect( res.body.error.simple ).to.equal('error')
   })
 
   it('should handle a koa Exception and send it to the logger console API', async function(){
@@ -206,7 +201,7 @@ describe('mh::test::int::KoaApiHandle', function(){
     expect( test_err.simple ).to.equal('error')
 
     expect( res.body.error.label ).to.equal('Request Error')
-    expect( res.body.error.message ).to.equal('oh no error')
+    expect( res.body.error.message ).to.equal('error')
     expect( res.body.error.name ).to.equal('Exception')
     expect( res.body.error.status ).to.equal(500)
     expect( res.body.error.simple ).to.equal('error')
