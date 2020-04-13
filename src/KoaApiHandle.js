@@ -157,6 +157,7 @@ class KoaApiHandle {
             if (process.env.NODE_ENV === 'production') delete response_error.stack
           }
         }
+        response_error.id = error.id
         response_error.name = (error.name) ? error.name : 'Error'
         response_error.status = (error.status) ? error.status : 500
         response_error.label = (error.label) ? error.label : 'Request Error'
