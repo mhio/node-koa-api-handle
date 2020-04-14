@@ -162,7 +162,7 @@ class KoaApiHandle {
         response_error.status = (error.status) ? error.status : 500
         response_error.label = (error.label) ? error.label : 'Request Error'
         response_error.simple = (error.simple) ? error.simple : default_error_message
-        response_error.message = (error.message) ? error.simple : default_error_message
+        response_error.message = (!response_error.message) ? error.simple : default_error_message
         const message = new MessageError(response_error)
         ctx.status = response_error.status
         ctx.type = 'json'
