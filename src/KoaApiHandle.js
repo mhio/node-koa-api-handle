@@ -268,19 +268,20 @@ class KoaApiHandle {
         throw error
       } 
       finally {
-        const log_obj = {
-          ...mapHttpRequest(ctx.req),
-          ...mapHttpResponse(ctx.res),
-        }
-        if (outer_error) {
-          log_obj.error = Flatted.parse(Flatted.stringify(outer_error))
-          log_obj.error.message = outer_error.message 
-          log_obj.error.stack = outer_error.stack 
-        }
         try {
+          const log_obj = {
+            ...mapHttpRequest(ctx.req),
+            ...mapHttpResponse(ctx.res),
+          }
+          if (outer_error) {
+            log_obj.error = Flatted.parse(Flatted.stringify(outer_error))
+            log_obj.error.message = outer_error.message 
+            log_obj.error.stack = outer_error.stack 
+          }
           logger[log_level](log_obj)
         } catch (logger_error) {
-          console.error('logger failed to log error', log_level, log_obj) 
+          console.error('logger failed to log error:', logger_error) 
+          console.error('logger failed log entry ', log_level, log_obj, outer_error) 
         }
       }
     }
