@@ -272,7 +272,11 @@ class KoaApiHandle {
           ...mapHttpResponse(ctx.res),
         }
         if (outer_error) log_obj.error = outer_error
-        logger[log_level](log_obj)
+        try {
+          logger[log_level](log_obj)
+        } catch (logger_error) {
+          console.error('logger failed to log error', log_level, log_obj) 
+        }
       }
     }
   }
