@@ -50,6 +50,7 @@ describe('mh::test::unit::KoaApiHandle', function(){
     const ctx = { req: {}, res: {} }
     const next = () => Promise.resolve(true)
     const res = await logmw(ctx, next)
+    expect(res).to.be.undefined
   })
 
   describe('reset debug', function(){
