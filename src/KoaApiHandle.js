@@ -268,8 +268,9 @@ class KoaApiHandle {
         throw error
       } 
       finally {
+        let log_obj
         try {
-          const log_obj = {
+          log_obj = {
             ...mapHttpRequest(ctx.req),
             ...mapHttpResponse(ctx.res),
           }
