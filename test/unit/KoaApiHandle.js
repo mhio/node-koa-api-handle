@@ -47,7 +47,7 @@ describe('mh::test::unit::KoaApiHandle', function(){
     const logmw = KoaApiHandle.logging({ logger: {
       info: () => { throw new Error('logbad') }
     }})
-    const ctx = {}
+    const ctx = { req: {}, res: {} }
     const next = () => Promise.resolve(true)
     const res = await logmw(ctx, next)
   })
