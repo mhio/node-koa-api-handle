@@ -1,3 +1,4 @@
+const Flatted = require('flatted')
 const debug = require('debug')('mh:KoaApiHandle')
 const base62 = require('base62-random')
 const _clone = require('lodash.clone')
@@ -271,7 +272,11 @@ class KoaApiHandle {
           ...mapHttpRequest(ctx.req),
           ...mapHttpResponse(ctx.res),
         }
-        if (outer_error) log_obj.error = outer_error
+        if (outer_error) {
+          log_obj.error = Flatted.parse(Flatted.stringify(outer_error))
+          log_obj.error.message = outer_error.message 
+          log_obj.error.stack = outer_error.stack 
+        }
         try {
           logger[log_level](log_obj)
         } catch (logger_error) {

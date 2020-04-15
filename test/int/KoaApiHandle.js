@@ -253,7 +253,7 @@ describe('mh::test::int::KoaApiHandle', function(){
     it('should run a logger on error', async function(){
       const logs = []
       app.use(KoaApiHandle.logging({ logger: { info: obj => logs.push(obj) }}))
-      app.use(() => { throw new Error('nope') })
+      app.use(() => { let err = new Error('nope'); err.code = 'wat'; throw err })
       await request.get('/error')
       expect(logs[0]).to.containSubset({
         req: {
@@ -264,7 +264,7 @@ describe('mh::test::int::KoaApiHandle', function(){
         res: {
           headers: {},
         },
-        error: { message: 'nope' }
+        error: { message: 'nope', code: 'wat' }
       })
     })
     it('should run a logger on error', async function(){
