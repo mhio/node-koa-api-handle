@@ -40,6 +40,18 @@ describe('mh::test::unit::KoaApiHandle', function(){
     expect( KoaApiHandle.tracking() ).to.be.a('function')
   })
 
+  it('should return a logging function', function(){
+    expect( KoaApiHandle.logging() ).to.be.a('function')
+  })
+  it('should return a logging function', async function(){
+    const logmw = KoaApiHandle.logging({ logger: {
+      info: () => { throw new Error('logbad') }
+    }})
+    const ctx = {}
+    const next = () => Promise.resolve(true)
+    const res = await logmw(ctx, next)
+  })
+
   describe('reset debug', function(){
 
     let debug_state = null 
