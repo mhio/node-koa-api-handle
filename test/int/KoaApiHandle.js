@@ -159,6 +159,49 @@ describe('mh::test::int::KoaApiHandle', function(){
     })
   })
 
+  it('should handle an allowed koa error with extra fields', async function(){
+    //app.on('error', KoaApiHandle.error())
+    app.use(KoaApiHandle.errors({ allowed_errors: { Exception } }))
+    app.use(ctx => {
+      const err = new Exception('oh no error', { simple: 'error'} )
+      err.something = 'something'
+      throw err
+    })
+    let res = await request.get('/error')
+    expect( res.status ).to.equal(500)
+    expect( res.body ).to.containSubset({
+      error: { 
+        label: 'Request Error',
+        message: 'oh no error',
+        name: 'Exception',
+        simple: 'error',
+        something: 'something',
+      }
+    })
+  })
+
+  it('should send stack if send full errors is on', async function(){
+    //app.on('error', KoaApiHandle.error())
+    app.use(KoaApiHandle.errors({ send_full_errors: true }))
+    app.use(ctx => {
+      const err = new Exception('oh no error', { simple: 'error'} )
+      err.something = 'something'
+      throw err
+    })
+    let res = await request.get('/error')
+    expect( res.status ).to.equal(500)
+    expect( res.body ).to.containSubset({
+      error: {
+        label: 'Request Error',
+        message: 'oh no error',
+        name: 'Exception',
+        simple: 'error',
+        something: 'something',
+        stack: (val) => /^Exception: /.exec(val),
+      }
+    })
+  })
+
   it('should handle a koa Exception and send the original to the logger function', async function(){
     //app.on('error', KoaApiHandle.error())
     let test_msg

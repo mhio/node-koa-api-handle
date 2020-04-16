@@ -149,21 +149,23 @@ class KoaApiHandle {
           }
         }
         let response_error = {}
-        if (send_full_errors) {
-          response_error = _clone(error)
-        } 
-        else {
-          if (allowed_errors[error.name]) {
-            response_error = _clone(error)
-            if (process.env.NODE_ENV === 'production') delete response_error.stack
+        if (send_full_errors || allowed_errors[error.name]) {
+          for (let field in error) {
+            response_error[field] = error[field]
           }
+          response_error.message = error.message
+        } 
+        if (send_full_errors) {
+          // maybe need a deep clones that includes all stack/messages for embedded errors
+          response_error.stack = error.stack
         }
+        console.log(response_error.message)
         response_error.id = error.id
         response_error.name = (error.name) ? error.name : 'Error'
         response_error.status = (error.status) ? error.status : 500
         response_error.label = (error.label) ? error.label : 'Request Error'
         response_error.simple = (error.simple) ? error.simple : default_error_message
-        response_error.message = (!response_error.message) ? error.simple : default_error_message
+        if (!response_error.message) response_error.message = error.simple
         const message = new MessageError(response_error)
         ctx.status = response_error.status
         ctx.type = 'json'
