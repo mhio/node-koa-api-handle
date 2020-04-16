@@ -1,7 +1,6 @@
 const Flatted = require('flatted')
 const debug = require('debug')('mh:KoaApiHandle')
 const base62 = require('base62-random')
-const _clone = require('lodash.clone')
 const { Exception } = require('@mhio/exception')
 const { 
   Message,
