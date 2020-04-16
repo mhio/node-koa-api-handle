@@ -162,7 +162,7 @@ describe('mh::test::int::KoaApiHandle', function(){
   it('should handle an allowed koa error with extra fields', async function(){
     //app.on('error', KoaApiHandle.error())
     app.use(KoaApiHandle.errors({ allowed_errors: { Exception } }))
-    app.use(ctx => {
+    app.use(() => {
       const err = new Exception('oh no error', { simple: 'error'} )
       err.something = 'something'
       throw err
@@ -183,7 +183,7 @@ describe('mh::test::int::KoaApiHandle', function(){
   it('should send stack if send full errors is on', async function(){
     //app.on('error', KoaApiHandle.error())
     app.use(KoaApiHandle.errors({ send_full_errors: true }))
-    app.use(ctx => {
+    app.use(() => {
       const err = new Exception('oh no error', { simple: 'error'} )
       err.something = 'something'
       throw err
