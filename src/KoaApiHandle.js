@@ -158,7 +158,6 @@ class KoaApiHandle {
           // maybe need a deep clones that includes all stack/messages for embedded errors
           response_error.stack = error.stack
         }
-        console.log(response_error.message)
         response_error.id = error.id
         response_error.name = (error.name) ? error.name : 'Error'
         response_error.status = (error.status) ? error.status : 500
