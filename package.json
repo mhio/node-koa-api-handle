@@ -1,6 +1,6 @@
 {
   "name": "@mhio/koa-api-handle",
-  "version": "0.10.10",
+  "version": "0.11.0-0",
   "description": "Koa API Promise Handler",
   "main": "lib/index.js",
   "scripts": {
@@ -36,14 +36,14 @@
     "@babel/register": "^7.0.0",
     "babel-eslint": "^10.0.1",
     "chai": "^4.1.2",
-    "eslint": "^6.6.0",
+    "chai-subset": "^1.6.0",
+    "eslint": "~7.6.0",
     "jsdoc": "^3.5.5",
-    "jsdoc-to-markdown": "~5.0.3",
+    "jsdoc-to-markdown": "~6.0.1",
     "koa": "^2.4.1",
-    "koa-router": "^7.4.0",
-    "mocha": "^6.2.2",
+    "mocha": "~8.1.1",
     "nodemon": "~2.0.3",
-    "nyc": "~15.0.1",
+    "nyc": "~15.1.0",
     "source-map-support": "^0.5.2",
     "supertest": "^4.0.2"
   },
@@ -51,8 +51,14 @@
     "@mhio/api-response": "0.3.0",
     "@mhio/exception": "~0.2.1",
     "bluebird": "^3.5.1",
-    "chai-subset": "^1.6.0",
-    "flatted": "^2.0.2",
+    "flatted": "~3.0.4",
     "pino-std-serializers": "^2.4.2"
+  },
+  "mocha": {
+    "require": [
+      "@babel/register",
+      "./test/mocha-setup.js"
+    ],
+    "ui": "bdd"
   }
 }
