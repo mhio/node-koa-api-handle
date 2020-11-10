@@ -895,6 +895,15 @@
   resolved "https://registry.npmjs.org/@mhio/exception/-/exception-0.2.1.tgz#054c27f09bb7bb1d48461ab707a931873e12f9d9"
   integrity sha512-nhdUeHjIV8SwQXHucQHXjIltt8Cndw9iNiyejdAcPtZKro6W8MYbdOxdz9Q+T+yWntC9ub7rRMWDcao5sBpbDw==
 
+"@mhio/koa-generic-handle@^0.2.0":
+  version "0.2.0"
+  resolved "https://registry.npmjs.org/@mhio/koa-generic-handle/-/koa-generic-handle-0.2.0.tgz#a92747fd59c48472ebfd179135c225ecad7f3a33"
+  integrity sha512-NG6NiSpX9Rx8pH65VqwNmLfVw20GdhmLW3jBhsG6jVyPvRyECBsOjLmHIwbqp4LqeJ3qAEf33Jux7azyoeIjCA==
+  dependencies:
+    base62-random "^0.3.5"
+    flatted "^3.1.0"
+    pino-std-serializers "^2.5.0"
+
 "@mhio/message@~0.4.0":
   version "0.4.0"
   resolved "https://registry.npmjs.org/@mhio/message/-/message-0.4.0.tgz#31527c64bb516e1178a4e533d52e0f763fb5d735"
@@ -2233,6 +2242,11 @@ flatted@^2.0.0:
   version "2.0.2"
   resolved "https://registry.npmjs.org/flatted/-/flatted-2.0.2.tgz#4575b21e2bcee7434aa9be662f4b7b5f9c2b5138"
   integrity sha512-r5wGx7YeOwNWNlCA0wQ86zKyDLMQr+/RB8xy74M4hTphfmjlijTSSXGuH8rnvKZnfT9i+75zmd8jcKdMR4O6jA==
+
+flatted@^3.1.0:
+  version "3.1.0"
+  resolved "https://registry.npmjs.org/flatted/-/flatted-3.1.0.tgz#a5d06b4a8b01e3a63771daa5cb7a1903e2e57067"
+  integrity sha512-tW+UkmtNg/jv9CSofAKvgVcO7c2URjhTdW1ZTkcAritblu8tajiYy7YisnIflEwtKssCtOxpnBRoCB7iap0/TA==
 
 flatted@~3.0.4:
   version "3.0.4"
@@ -3793,6 +3807,11 @@ pino-std-serializers@^2.4.2:
   version "2.4.2"
   resolved "https://registry.npmjs.org/pino-std-serializers/-/pino-std-serializers-2.4.2.tgz#cb5e3e58c358b26f88969d7e619ae54bdfcc1ae1"
   integrity sha512-WaL504dO8eGs+vrK+j4BuQQq6GLKeCCcHaMB2ItygzVURcL1CycwNEUHTD/lHFHs/NL5qAz2UKrjYWXKSf4aMQ==
+
+pino-std-serializers@^2.5.0:
+  version "2.5.0"
+  resolved "https://registry.npmjs.org/pino-std-serializers/-/pino-std-serializers-2.5.0.tgz#40ead781c65a0ce7ecd9c1c33f409d31fe712315"
+  integrity sha512-wXqbqSrIhE58TdrxxlfLwU9eDhrzppQDvGhBEr1gYbzzM4KKo3Y63gSjiDXRKLVS2UOXdPNR2v+KnQgNrs+xUg==
 
 pirates@^4.0.0:
   version "4.0.1"

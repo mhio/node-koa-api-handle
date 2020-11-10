@@ -1,6 +1,8 @@
 /* global expect */
 
 const { KoaApiHandle } = require('../../src/KoaApiHandle')
+const noop = function(){}
+const o = { noop }
 
 describe('mh::test::unit::KoaApiHandle', function(){
 
@@ -14,13 +16,19 @@ describe('mh::test::unit::KoaApiHandle', function(){
   })
 
   it('should return a response function', function(){
-    expect( KoaApiHandle.response() ).to.be.a('function')
+    expect( KoaApiHandle.response(noop) ).to.be.a('function')
+  })
+  it('should return a response object.function', function(){
+    expect( KoaApiHandle.response(o,'noop') ).to.be.a('function')
   })
 
   it('should return a customResponse function', function(){
-    expect( KoaApiHandle.customResponse() ).to.be.a('function')
+    expect( KoaApiHandle.customResponse(noop) ).to.be.a('function')
   })
-
+  it('should return a customResponse object.function', function(){
+    expect( KoaApiHandle.customResponse(o,'noop') ).to.be.a('function')
+  })
+  
   it('should return a customResponse function', async function(){
     let handler = KoaApiHandle.customResponse(()=> Promise.resolve('one'))
     let ctx = {}

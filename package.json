@@ -1,7 +1,7 @@
 {
   "name": "@mhio/koa-api-handle",
-  "version": "0.11.0",
-  "description": "Koa API Promise Handler",
+  "version": "0.12.0",
+  "description": "Koa API Handler",
   "main": "lib/index.js",
   "scripts": {
     "test": "mocha test/unit test/int",
@@ -49,7 +49,7 @@
   },
   "dependencies": {
     "@mhio/api-response": "0.3.0",
-    "@mhio/exception": "~0.2.1",
+    "@mhio/koa-generic-handle": "^0.2.0",
     "bluebird": "^3.5.1",
     "flatted": "~3.0.4",
     "pino-std-serializers": "^2.4.2"
