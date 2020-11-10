@@ -66,7 +66,7 @@ class KoaApiHandle extends KoaGenericHandle {
     if (!method) {
       throw new Error('response handler requires a method argument')
     }
-    if (object && method  && typeof object[method] !== 'function') {
+    if (object && method && typeof object[method] !== 'function') {
       throw new Error('response handler requires function')
     }
     return this.response(object[method].bind(object))
@@ -108,7 +108,7 @@ class KoaApiHandle extends KoaGenericHandle {
     if (!method) {
       throw new Error('response handler requires a method argument')
     }
-    if (object && method  && typeof object[method] !== 'function') {
+    if (object && method && typeof object[method] !== 'function') {
       throw new Error('response handler requires function')
     }
     return this.customResponse(object[method].bind(object))
