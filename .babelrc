@@ -2,19 +2,12 @@
   "presets": [
     [
       "@babel/preset-env",
-      { "targets": { "node": "8" } }
-    ],
+      { "targets": { "node": "14" } }
+    ]
   ],
   "sourceMaps": "inline",
   "retainLines": true,
-  plugins: [
-    [
-      "@babel/plugin-transform-async-to-generator",
-      {
-        "module": "bluebird",
-        "method": "coroutine"
-      }
-    ]
+  "plugins": [
   ]
 }
 
