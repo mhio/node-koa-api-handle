@@ -9,6 +9,7 @@ const {
 } = require('./KoaApiHandle')
 
 module.exports = {
+  default: KoaApiHandle,
   KoaApiHandle,
   KoaApiHandleException,
   // Dependencies
