@@ -3,6 +3,7 @@
 
 A Koa API Handler to do all the request heavy lifting, so you just write logic
 
+Higher level use from: https://github.com/mhio/node-koa-api
 
 ## Install
 
@@ -60,3 +61,5 @@ app.use(KoaApiHandle.notFound())
 
 app.listen()
 ```
+
+https://github.com/mhio/node-koa-api-handle
