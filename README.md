@@ -62,4 +62,9 @@ app.use(KoaApiHandle.notFound())
 app.listen()
 ```
 
+## Changes
+
+v0.12.x -- Node 16+
+
+
 https://github.com/mhio/node-koa-api-handle
