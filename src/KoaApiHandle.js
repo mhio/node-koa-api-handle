@@ -1,4 +1,3 @@
-const Flatted = require('flatted')
 const debug = require('debug')('mh:KoaApiHandle')
 const { KoaGenericHandle } = require('@mhio/koa-generic-handle')
 const { getRandomBase62String } = KoaGenericHandle

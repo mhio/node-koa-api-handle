@@ -49,7 +49,6 @@
   "dependencies": {
     "@mhio/api-response": "0.3.0",
     "@mhio/koa-generic-handle": "^0.2.0",
-    "flatted": "~3.2.6",
     "pino-std-serializers": "^5"
   },
   "mocha": {
