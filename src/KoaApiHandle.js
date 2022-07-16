@@ -153,7 +153,9 @@ class KoaApiHandle extends KoaGenericHandle {
     let logger_pass_object = false
     let send_full_errors = false
     let default_error_message = 'There was a problem processing your request'
-    let allowed_errors = {}
+    let allowed_errors = {
+      PayloadTooLargeError: true, // From bodyParser limits
+    }
     if ( options ) {
       if ( options.logger ) {
         if (typeof options.logger === 'function') {
@@ -165,7 +167,7 @@ class KoaApiHandle extends KoaGenericHandle {
       if ( options.logger_pass_args ) logger_pass_args = true
       if ( options.logger_pass_object ) logger_pass_object = true
       if ( options.send_full_errors ) send_full_errors = true
-      if ( options.allowed_errors ) allowed_errors = options.allowed_errors
+      if ( options.allowed_errors ) allowed_errors = { ...allowed_errors, ...options.allowed_errors }
       if ( options.default_error_message ) default_error_message = options.default_error_message
     }
     return async function koaApiHandleError( ctx, next ){
