@@ -44,7 +44,7 @@
     "nodemon": "~2.0.3",
     "nyc": "~15.1.0",
     "source-map-support": "^0.5.21",
-    "supertest": "^4.0.2"
+    "supertest": "~6.2.4"
   },
   "dependencies": {
     "@mhio/api-response": "0.3.0",
