@@ -28,5 +28,5 @@ rules:
 #  array-bracket-spacing: [ 1, "always", { "singleValue": false } ]
   block-spacing: [ 1, "always" ]
 
-parser: babel-eslint
+parser: "@babel/eslint-parser"
 
