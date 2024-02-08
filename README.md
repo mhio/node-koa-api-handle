@@ -64,7 +64,7 @@ app.listen()
 
 ## Changes
 
-v0.12.x -- Node 16+
+v0.12.x -- Node 20+, pino for logger
 
 
 https://github.com/mhio/node-koa-api-handle

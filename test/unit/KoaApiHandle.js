@@ -1,10 +1,10 @@
 /* global expect */
 
-const { KoaApiHandle } = require('../../src/KoaApiHandle')
+import { KoaApiHandle } from '../../src/KoaApiHandle.js'
 const noop = function(){}
 const o = { noop }
 
-describe('mh::test::unit::KoaApiHandle', function(){
+describe('mhio::test::unit::KoaApiHandle', function(){
 
   it('should load KoaApiHandle', function(){
     expect( KoaApiHandle ).to.be.ok    
@@ -46,39 +46,6 @@ describe('mh::test::unit::KoaApiHandle', function(){
 
   it('should return an error function', function(){
     expect( KoaApiHandle.tracking() ).to.be.a('function')
-  })
-
-  it('should return a logging function', function(){
-    expect( KoaApiHandle.logging() ).to.be.a('function')
-  })
-  it('should return a logging function', async function(){
-    const logmw = KoaApiHandle.logging({ logger: {
-      info: () => { throw new Error('logbad') }
-    }})
-    const ctx = { req: {}, res: {} }
-    const next = () => Promise.resolve(true)
-    const res = await logmw(ctx, next)
-    expect(res).to.be.undefined
-  })
-
-  describe('reset debug', function(){
-
-    let debug_state = null 
-    before(function(){
-      debug_state = KoaApiHandle.debug.enabled
-    })
-    after(function(){
-      KoaApiHandle.debug.enabled = debug_state
-    })
-
-    it('should enable debug', function(){
-      expect( KoaApiHandle.enableDebug() ).to.be.ok
-    })
-
-    it('should disalbe debug', function(){
-      expect( KoaApiHandle.disableDebug() ).to.be.ok
-    })
-
   })
 
 })

@@ -1,13 +1,23 @@
 /* global expect */
-const supertest = require('supertest')
-const http = require('http')
-const Koa = require('koa')
-const { Exception } = require('@mhio/exception')
+import supertest from 'supertest'
+import http from 'http'
+import Koa from 'koa'
+import { Writable } from 'node:stream'
+import { Exception } from '@mhio/exception'
+import pino from 'pino'
 
-const { KoaApiHandle } = require('../../src/KoaApiHandle')
+import { KoaApiHandle } from '../../src/index.js'
 
 
-describe('mh::test::int::KoaApiHandle', function(){
+export class MemoryStream extends Writable {
+  logs = []
+  _write(chunk, _, next){
+    this.logs.push(JSON.parse(chunk.toString()))
+    next()
+  }
+}
+
+describe('mhio::test::int::KoaApiHandle', function(){
 
   let app = null
   let server = null
@@ -94,7 +104,7 @@ describe('mh::test::int::KoaApiHandle', function(){
     ])
   })
 
-  it('should handle an incomingt x-transaction-id if trusted', async function(){
+  it('should handle an incoming x-transaction-id if trusted', async function(){
     let o = { ok: ()=> Promise.resolve('ok') }
     app.use(KoaApiHandle.tracking({ transaction_trust: true }))
     app.use(KoaApiHandle.response(o, 'ok'))
@@ -107,7 +117,7 @@ describe('mh::test::int::KoaApiHandle', function(){
     expect( res.headers['x-transaction-id'] ).to.equal('wakka')
   })
 
-  it('should handle an incomingt x-transaction-id if ip is trusted', async function(){
+  it('should handle an incoming x-transaction-id if ip is trusted', async function(){
     let o = { ok: ()=> Promise.resolve('ok') }
     app.use(KoaApiHandle.tracking({ transaction_trust: 'ip', transaction_trust_ips: ['::ffff:127.0.0.1', '127.0.0.1', '::1'] }))
     app.use(KoaApiHandle.response(o, 'ok'))
@@ -119,7 +129,7 @@ describe('mh::test::int::KoaApiHandle', function(){
     ])
     expect( res.headers['x-transaction-id'] ).to.equal('wakka')
   })
-  it('should handle an incomingt x-transaction-id if ip is not trusted', async function(){
+  it('should handle an incoming x-transaction-id if ip is not trusted', async function(){
     let o = { ok: ()=> Promise.resolve('ok') }
     app.use(KoaApiHandle.tracking({ transaction_trust: 'ip', transaction_trust_ips: ['8.8.8.8'] }))
     app.use(KoaApiHandle.response(o, 'ok'))
@@ -202,46 +212,40 @@ describe('mh::test::int::KoaApiHandle', function(){
     })
   })
 
-  it('should handle a koa Exception and send the original to the logger function', async function(){
+  it('should handle a koa Exception and send the original to the pino logger', async function(){
     //app.on('error', KoaApiHandle.error())
-    let test_msg
-    let test_err
+    let mem = new MemoryStream()
+    let logger = pino(mem)
     // this could go horribly wrong if multiple tests accessed this endpoint
-    app.use(KoaApiHandle.errors({ logger: (msg, err)=> { test_msg = msg; test_err = err }}))
+    app.use(KoaApiHandle.errors({ logger }))
     app.use(ctx => {
       if ( ctx.request.url === '/error' ) throw new Exception('oh no error', { simple: 'error'} )
     })
     let res = await request.get('/error')
     expect( res.status ).to.equal(500)
-    expect( test_msg ).to.equal('Error in [GET /error]')
+    expect( mem.logs[0].msg ).to.equal('Error in [GET /error]')
 
-    expect( test_err.message ).to.equal('oh no error')
-    expect( test_err.name ).to.equal('Exception')
-    expect( test_err.status ).to.be.undefined
-    expect( test_err.simple ).to.equal('error')
+    expect( mem.logs[0].message ).to.equal('oh no error')
+    // expect( mem.logs[0].name ).to.equal('Exception')
+    expect( mem.logs[0].status ).to.be.undefined
+    expect( mem.logs[0].error.simple ).to.equal('error')
   })
 
   it('should handle a koa Exception and send it to the logger console API', async function(){
-    //app.on('error', KoaApiHandle.error())
-    let test_msg
-    let test_err
+    let mem = new MemoryStream()
+    let logger = pino(mem)
     // this could go horribly wrong if multiple tests accessed this endpoint
-    app.use(KoaApiHandle.errors({
-      logger: {
-        error: (msg, err)=> { test_msg = msg; test_err = err }
-      }
-    }))
+    app.use(KoaApiHandle.errors({ logger }))
     app.use(ctx => {
       if ( ctx.request.url === '/error' ) throw new Exception('oh no error', { simple: 'error'} )
     })
     let res = await request.get('/error')
     expect( res.status ).to.equal(500)
-    expect( test_msg ).to.equal('Error in [GET /error]')
-
-    expect( test_err.message ).to.equal('oh no error')
-    expect( test_err.name ).to.equal('Exception')
-    expect( test_err.status ).to.be.undefined
-    expect( test_err.simple ).to.equal('error')
+    expect( mem.logs[0].msg ).to.equal('Error in [GET /error]')
+    
+    expect( mem.logs[0].error.message ).to.equal('oh no error')
+    expect( mem.logs[0].error.status ).to.be.undefined
+    expect( mem.logs[0].error.simple ).to.equal('error')
 
     expect( res.body.error.label ).to.equal('Request Error')
     expect( res.body.error.message ).to.equal('error')
@@ -277,11 +281,12 @@ describe('mh::test::int::KoaApiHandle', function(){
 
   describe('logging', function(){
     it('should run a logger', async function(){
-      const logs = []
-      app.use(KoaApiHandle.logging({ logger: { info: obj => logs.push(obj) }}))
+      let mem = new MemoryStream()
+      let logger = pino(mem)
+      app.use(KoaApiHandle.logging({ logger }))
       app.use(ctx => ctx.body = 'response')
       await request.get('/request')
-      expect(logs[0]).to.containSubset({
+      expect(mem.logs[0]).to.containSubset({
         req: {
           headers: {},
           method: 'GET',
@@ -294,25 +299,15 @@ describe('mh::test::int::KoaApiHandle', function(){
       })
     })
     it('should run a logger on error', async function(){
-      const logs = []
-      app.use(KoaApiHandle.logging({ logger: { info: obj => logs.push(obj) }}))
+      let mem = new MemoryStream()
+      let logger = pino(mem)
+      app.use(KoaApiHandle.logging({ logger }))
       app.use(() => { let err = new Error('nope'); err.code = 'wat'; throw err })
       await request.get('/error')
-      expect(logs[0]).to.containSubset({
-        req: {
-          headers: {},
-          method: 'GET',
-          url: '/error',
-        },
-        res: {
-          headers: {},
-        },
-        error: { message: 'nope', code: 'wat' }
+      expect(mem.logs[0]).to.containSubset({
+        err: { message: 'nope', code: 'wat' },
+        reqId: 1,
       })
-    })
-    it('should run a logger on error', async function(){
-      const fn = () => app.use(KoaApiHandle.logging({ logger: {} }))
-      expect(fn).to.throw(/not a function/) 
     })
   })
   

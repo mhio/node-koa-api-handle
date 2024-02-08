@@ -1,22 +1,25 @@
-const debug = require('debug')('mh:KoaApiHandle')
-const { KoaGenericHandle } = require('@mhio/koa-generic-handle')
-const { getRandomBase62String } = KoaGenericHandle
-const { 
+import debugr from 'debug'
+import { KoaGenericHandle } from '@mhio/koa-generic-handle'
+import { 
   Message,
   MessageData,
   MessageError,
   ApiResponse
-} = require('@mhio/api-response')
+ } from '@mhio/api-response'
+
+const debug = debugr('mhio:KoaApiHandle')
+const { getRandomBase62String } = KoaGenericHandle
+
 /** 
   Handle API requests and errors in Koa apps in a standard way. 
 */
-class KoaApiHandle extends KoaGenericHandle {
+export class KoaApiHandle extends KoaGenericHandle {
 
   /**
    * @summary Default API response handler
    * @description `.response` can handle all requests that come through Koa. This ensures standard
-   *               response format and handling. Pass it an object and the method used to handle the reponse
-   * @param {object} object - The object contianing the request handler
+   *               response format and handling. Pass it an object and the method used to handle the response
+   * @param {object} object - The object containing the request handler
    * @param {string} method - The method name used to handle this request
    */
   static response(object, method){
@@ -54,8 +57,8 @@ class KoaApiHandle extends KoaGenericHandle {
   /**
    * @summary Default API response bind handler
    * @description `.response` can handle all requests that come through Koa. This ensures standard
-   *               response format and handling. Pass it an object and the method used to handle the reponse
-   * @param {object} object - The object contianing the request handler
+   *               response format and handling. Pass it an object and the method used to handle the response
+   * @param {object} object - The object containing the request handler
    * @param {string} method - The method name used to handle this request
    */
   static responseBind(object, method){
@@ -73,8 +76,8 @@ class KoaApiHandle extends KoaGenericHandle {
 
   /**
    * @summary Custom API response handler
-   * @description `.customResponse` allows `ctx` to be set by the user. Pass it an object and the method used to handle the reponse
-   * @param {object} object - The object contianing the request handler
+   * @description `.customResponse` allows `ctx` to be set by the user. Pass it an object and the method used to handle the response
+   * @param {object} object - The object containing the request handler
    * @param {string} method - The method name used to handle this request
    */
   static customResponse(object, method){
@@ -96,7 +99,7 @@ class KoaApiHandle extends KoaGenericHandle {
 
   /**
    * @summary Custom API response bind handler
-   * @description `.customResponse` allows `ctx` to be set by the user. Pass it an object and the method used to handle the reponse
+   * @description `.customResponse` allows `ctx` to be set by the user. Pass it an object and the method used to handle the response
    * @param {object} object - The object containing the request handler
    * @param {string} method - The method name used to handle this request
    */
@@ -149,7 +152,7 @@ class KoaApiHandle extends KoaGenericHandle {
   static errors (options) {
     let loggerFn = console.error
     let logger_pass_args = false
-    let logger_pass_object = false
+    let logger_pass_object = true
     let send_full_errors = false
     let default_error_message = 'There was a problem processing your request'
     let allowed_errors = {
@@ -225,34 +228,12 @@ class KoaApiHandle extends KoaGenericHandle {
     }
   }
 
-
   static get debug(){
     return debug
-  }
-
-  static enableDebug(){
-    // debugl.enabled = true
-    // debug = debugl
-    return true
-  }
-
-  static disableDebug(){
-    // debugl.enabled = false
-    // debug = noop
-    return true
   }
 
   constructor(){
     throw new Error('No class instances for you!')
   }
 
-}
-
-module.exports = {
-  KoaApiHandle,
-  // Dependencies
-  Message,
-  MessageData,
-  MessageError,
-  ApiResponse
 }
