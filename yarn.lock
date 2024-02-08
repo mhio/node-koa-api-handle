@@ -113,10 +113,10 @@
   resolved "https://registry.npmjs.org/@mhio/exception/-/exception-0.2.1.tgz#054c27f09bb7bb1d48461ab707a931873e12f9d9"
   integrity sha512-nhdUeHjIV8SwQXHucQHXjIltt8Cndw9iNiyejdAcPtZKro6W8MYbdOxdz9Q+T+yWntC9ub7rRMWDcao5sBpbDw==
 
-"@mhio/koa-generic-handle@~v0.3.0-1":
-  version "0.3.0-1"
-  resolved "https://registry.npmjs.org/@mhio/koa-generic-handle/-/koa-generic-handle-0.3.0-1.tgz#b2407ce7cb2616d8f17662a89306338471954787"
-  integrity sha512-qZn2Y+e+s0bgi273eemiECW39j1mXITCmgGqz7G8cv7YiXmCtMWgP8Jk/xAO4lKwrcB+LpSr0w6nH17z9lKL+g==
+"@mhio/koa-generic-handle@~0.3.0":
+  version "0.3.0"
+  resolved "https://registry.npmjs.org/@mhio/koa-generic-handle/-/koa-generic-handle-0.3.0.tgz#6b92d5ecb93d7557faa5193a77ebe3b2d337363a"
+  integrity sha512-SHK2RY4MplEg2cX3NeXmpXagFREmGWJ9bVqnEwPNSwng/dT+59St9LjecyRWvOgRDGAwYIneafqUuUq2aRgYRg==
   dependencies:
     base62-random "^0.3.5"
     flatted "~3.2.9"

@@ -41,7 +41,7 @@
   },
   "dependencies": {
     "@mhio/api-response": "0.3.0",
-    "@mhio/koa-generic-handle": "~v0.3.0-1"
+    "@mhio/koa-generic-handle": "~0.3.0"
   },
   "mocha": {
     "require": [
