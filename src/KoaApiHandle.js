@@ -148,6 +148,7 @@ export class KoaApiHandle extends KoaGenericHandle {
    * @param {boolean} options.logger_pass_object - By default a preformatted `message` and the `error` object are passed in. This passes the jsonable object.
    * @param {boolean} options.send_full_errors - Send complete original error out (usually api to api comms).
    * @param {object} options.allowed_errors - Names of errors allowed out to users
+   * @param {object} options.html_errors - Names of errors that send html
    */
   static errors (options) {
     let loggerFn = console.error
@@ -158,6 +159,7 @@ export class KoaApiHandle extends KoaGenericHandle {
     let allowed_errors = {
       PayloadTooLargeError: true, // From bodyParser limits
     }
+    let html_errors = {}
     if ( options ) {
       if ( options.logger ) {
         if (typeof options.logger === 'function') {
@@ -170,13 +172,14 @@ export class KoaApiHandle extends KoaGenericHandle {
       if ( options.logger_pass_object ) logger_pass_object = true
       if ( options.send_full_errors ) send_full_errors = true
       if ( options.allowed_errors ) allowed_errors = { ...allowed_errors, ...options.allowed_errors }
+      if ( options.html_errors ) html_errors = { ...options.html_errors }
       if ( options.default_error_message ) default_error_message = options.default_error_message
     }
     return async function koaApiHandleError( ctx, next ){
       try {
         await next()
       } catch (error) {
-        debug('request', ctx.request)
+        debug('request', ctx.req)
         debug('api error', error)
         if (!error.id) error.id = `e-${getRandomBase62String(12)}`
         if ( loggerFn ) {
@@ -213,6 +216,12 @@ export class KoaApiHandle extends KoaGenericHandle {
         if (send_full_errors) {
           // maybe need a deep clones that includes all stack/messages for embedded errors
           response_error.stack = error.stack
+        }
+        if (html_errors[error.name]) {
+          ctx.status = error.status || 500
+          ctx.type = 'html'
+          ctx.body = error.body || default_error_message
+          return
         }
         response_error.id = error.id
         response_error.name = (error.name) ? error.name : 'Error'
